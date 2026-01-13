@@ -1,6 +1,7 @@
 import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
+import { Button } from '~/components/ui/button';
 // import { createPageUrl } from "@/utils";
 
 export default function Hero() {
@@ -58,14 +59,17 @@ export default function Hero() {
             <div className='flex flex-wrap gap-4'>
               {/* <Link to={createPageUrl("Dashboard")}> */}
               <Link to={''}>
-                <button className='rounded-full bg-emerald-600 px-8 py-6 text-lg text-white shadow-lg shadow-emerald-200 transition-all hover:bg-emerald-700 hover:shadow-xl hover:shadow-emerald-300'>
+                <Button className='shadow-lg shadow-emerald-200 data-[hovered=true]:shadow-xl data-[hovered=true]:shadow-emerald-300'>
                   Book Now
                   <ArrowRight className='ml-2 h-5 w-5' />
-                </button>
+                </Button>
               </Link>
-              <button className='rounded-full border-2 border-slate-200 px-8 py-6 text-lg hover:border-emerald-300 hover:bg-emerald-50'>
+              <Button
+                variant='secondary'
+                className='border-2 border-slate-200 data-[hovered=true]:border-emerald-300 data-[hovered=true]:bg-emerald-50'
+              >
                 View Services
-              </button>
+              </Button>
             </div>
           </motion.div>
 
