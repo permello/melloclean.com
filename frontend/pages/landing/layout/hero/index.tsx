@@ -2,6 +2,7 @@ import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
+import { Heading } from '~/components/ui/heading';
 // import { createPageUrl } from "@/utils";
 
 export default function Hero() {
@@ -29,12 +30,12 @@ export default function Hero() {
               Premium Cleaning Services
             </div>
 
-            <h1 className='mb-6 text-5xl leading-tight font-bold text-slate-900 md:text-6xl lg:text-7xl'>
+            <Heading className='mb-6 leading-tight'>
               A Cleaner Home,
               <span className='block bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent'>
                 A Happier Life
               </span>
-            </h1>
+            </Heading>
 
             <p className='mb-8 max-w-lg text-xl leading-relaxed text-slate-600'>
               Experience the luxury of a spotless home without lifting a finger. Our expert team

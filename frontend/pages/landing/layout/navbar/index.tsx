@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Sparkles, Menu, X } from 'lucide-react';
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '~/components/ui/button';
+import { companyConfig } from '~/core/config';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -34,7 +36,7 @@ export default function Navbar() {
               <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-200'>
                 <Sparkles className='h-6 w-6 text-white' />
               </div>
-              <span className='text-xl font-bold text-slate-900'>Sparkle Clean</span>
+              <span className='text-xl font-bold text-slate-900'>{companyConfig.Name}</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -55,9 +57,7 @@ export default function Navbar() {
                 <button className='text-slate-600 hover:text-emerald-600'>Customer Login</button>
               </Link>
               <Link to={''}>
-                <button className='rounded-full bg-emerald-600 px-6 text-white hover:bg-emerald-700'>
-                  Book Now
-                </button>
+                <Button size='small'>Book Now</Button>
               </Link>
             </div>
 

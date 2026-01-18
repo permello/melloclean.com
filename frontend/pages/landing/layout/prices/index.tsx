@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 // import { Button } from "@/components/ui/button";
 import { Link } from 'react-router';
+import { Button } from '~/components/ui/button';
 // import { createPageUrl } from "@/utils";
 
 const plans = [
@@ -131,16 +132,15 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <Link to={''}>
-                <button
-                  className={`w-full rounded-xl py-6 text-lg font-semibold ${
-                    plan.popular
-                      ? 'bg-white text-emerald-600 hover:bg-emerald-50'
-                      : 'bg-emerald-600 text-white hover:bg-emerald-700'
+              <Link to={'#pricing'}>
+                <Button
+                  variant={plan.popular ? 'secondary' : 'primary'}
+                  className={`w-full rounded-xl py-3 text-lg ${
+                    plan.popular && 'text-emerald-600 data-[hovered=true]:bg-emerald-50'
                   }`}
                 >
                   Get Started
-                </button>
+                </Button>
               </Link>
             </motion.div>
           ))}

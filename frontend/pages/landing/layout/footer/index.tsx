@@ -1,4 +1,6 @@
 import { Sparkles, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Heading } from '~/components/ui/heading';
+import { companyConfig } from '~/core/config';
 
 export default function Footer() {
   return (
@@ -10,7 +12,7 @@ export default function Footer() {
               <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-400'>
                 <Sparkles className='h-6 w-6 text-white' />
               </div>
-              <span className='text-2xl font-bold'>Sparkle Clean</span>
+              <Heading level={4}>{companyConfig.Name}</Heading>
             </div>
             <p className='mb-6 max-w-sm text-slate-400'>
               Professional cleaning services that transform your space into a spotless sanctuary.
@@ -39,7 +41,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className='mb-4 text-lg font-bold'>Services</h4>
+            <Heading level={6} className='mb-4'>
+              Services
+            </Heading>
             <ul className='space-y-3 text-slate-400'>
               <li>
                 <a href='#' className='transition-colors hover:text-emerald-400'>
@@ -65,7 +69,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className='mb-4 text-lg font-bold'>Company</h4>
+            <Heading level={6} className='mb-4'>
+              Company
+            </Heading>
             <ul className='space-y-3 text-slate-400'>
               <li>
                 <a href='#' className='transition-colors hover:text-emerald-400'>
@@ -92,7 +98,9 @@ export default function Footer() {
         </div>
 
         <div className='mt-12 border-t border-slate-800 pt-8 text-center text-slate-500'>
-          <p>&copy; {new Date().getFullYear()} Sparkle Clean. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} {companyConfig.Name}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
