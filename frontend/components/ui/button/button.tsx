@@ -1,11 +1,11 @@
 import React, { useRef, type ForwardedRef } from 'react';
 import { cn } from '~/core/util/cn';
-import { buttonVariants, loadingVariants } from '../ts/variants';
-import type { ButtonProps, LoadingProps } from '../ts/types';
+import { buttonVariants, loadingVariants } from './ts/variants';
+import type { ButtonProps, LoadingProps } from './ts/types';
 import { mergeProps, useButton, useFocusRing, useHover } from 'react-aria';
 import { mergeRefs } from '~/core/util/mergeRef';
 
-const LoadingButton = ({ variant }: LoadingProps) => {
+const LoadingButton: React.FC<LoadingProps> = ({ variant }: LoadingProps) => {
   const loadingClasses = cn(loadingVariants({ variant }));
   return (
     <div className={loadingClasses}>
@@ -14,17 +14,18 @@ const LoadingButton = ({ variant }: LoadingProps) => {
   );
 };
 
-const ForwardRefButton = (props: ButtonProps, forwardRef: ForwardedRef<HTMLButtonElement>) => {
-  const { className, variant, size, disabled, isLoading, children, ...rest } = props;
-  const ref = useRef<HTMLButtonElement>(null);
-  const { buttonProps, isPressed } = useButton({ ...rest, isDisabled: disabled }, ref);
+const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
+  const { className, variant, size, disabled, isLoading, children, ref, ...rest } = props;
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const { buttonProps, isPressed } = useButton({ ...rest, isDisabled: disabled }, buttonRef);
   const { focusProps, isFocusVisible } = useFocusRing();
   const { hoverProps, isHovered } = useHover({
     ...props,
     isDisabled: disabled,
   });
   const buttonClasses = cn(buttonVariants({ variant, size, className }));
-  const mRef = mergeRefs([ref, forwardRef]);
+  const mRef = mergeRefs([ref, buttonRef]);
 
   const ariaProps = mergeProps(buttonProps, focusProps, hoverProps);
   return (
@@ -54,8 +55,4 @@ const ForwardRefButton = (props: ButtonProps, forwardRef: ForwardedRef<HTMLButto
   );
 };
 
-const VariantButton = (): React.ForwardRefRenderFunction<HTMLButtonElement, ButtonProps> => {
-  return ForwardRefButton;
-};
-
-export { VariantButton };
+export { Button };
