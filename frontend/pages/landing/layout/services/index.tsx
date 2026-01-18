@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { ArrowRight } from 'lucide-react';
 import { services, colorClasses } from './constants';
+import { Heading } from '~/components/ui/heading';
 
 export default function Services() {
   return (
@@ -17,13 +18,12 @@ export default function Services() {
           <span className='text-sm font-semibold tracking-wider text-emerald-600 uppercase'>
             Our Services
           </span>
-          <h2 className='mt-3 mb-4 text-4xl font-bold text-slate-900 md:text-5xl'>
-            Cleaning Solutions for
+          <Heading level={2} className='mt-3 mb-4'>
+            Cleaning Solutions for{' '}
             <span className='bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent'>
-              {' '}
               Every Need
             </span>
-          </h2>
+          </Heading>
           <p className='mx-auto max-w-2xl text-xl text-slate-600'>
             From routine tidying to intensive deep cleans, we've got the perfect service for your
             space.
