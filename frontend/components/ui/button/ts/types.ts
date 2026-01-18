@@ -1,13 +1,13 @@
 import type { VariantProps } from 'class-variance-authority';
 import type { buttonVariants, loadingVariants } from './variants';
 import type { AriaButtonProps } from 'react-aria';
-import type React from 'react';
+import type { ComponentPropsWithRef } from 'react';
 
 interface ButtonBehaviorProp {
   isLoading?: boolean;
 }
 
-type ButtonProps = React.ComponentPropsWithRef<'button'> &
+type ButtonProps = ComponentPropsWithRef<'button'> &
   VariantProps<typeof buttonVariants> &
   ButtonBehaviorProp &
   AriaButtonProps<'button'>;

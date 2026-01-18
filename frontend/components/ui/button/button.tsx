@@ -1,4 +1,4 @@
-import React, { useRef, type ForwardedRef } from 'react';
+import React, { useRef } from 'react';
 import { cn } from '~/core/util/cn';
 import { buttonVariants, loadingVariants } from './ts/variants';
 import type { ButtonProps, LoadingProps } from './ts/types';
