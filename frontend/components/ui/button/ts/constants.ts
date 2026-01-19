@@ -10,9 +10,9 @@ export const baseClasses = [
   'duration-200',
   'rounded-full',
   'outline-none',
+  'font-semibold',
 ];
 export const primaryClasses = [
-  'font-semibold',
   'bg-emerald-600',
   'text-white',
   'shadow',
@@ -26,21 +26,19 @@ export const primaryClasses = [
   'data-[focus-visible=true]:ring-offset-2',
 ];
 export const secondaryClasses = [
-  'font-medium',
   'bg-gray-50',
-  'data-[hovered=true]:bg-gray-100',
   'disabled:bg-gray-50',
   'text-gray-950',
   'shadow',
   'border',
   'border-neutral-200/50',
-  'data-[focus-visible=true]:ring-gray-200',
+  'data-[hovered=true]:bg-gray-100',
   'data-[pressed=true]:scale-[0.98]',
+  'data-[focus-visible=true]:ring-gray-200',
   'data-[focus-visible=true]:ring-2',
   'data-[focus-visible=true]:ring-offset-2',
 ];
 export const destructiveClasses = [
-  'font-semibold',
   'bg-red-500',
   'data-[hovered=true]:bg-red-600',
   'text-white',
@@ -55,12 +53,18 @@ export const destructiveClasses = [
   'data-[focus-visible=true]:ring-offset-2',
 ];
 export const ghostClasses = [
-  'font-light',
-  'text-gray-950',
-  'data-[hovered=true]:text-gray-600',
+  'text-emerald-500',
   'disabled:text-gray-950',
-  'data-[focus-visible=true]:ring-gray-500/30',
-  'data-[focus-visible=true]:ring-1',
+  'border-2',
+  'border-slate-200',
+  'border-emerald-400',
+  'data-[pressed=true]:scale-[0.98]',
+  'data-[hovered=true]:text-emerald-400',
+  'data-[hovered=true]:border-emerald-300',
+  'data-[hovered=true]:bg-emerald-50',
+  'data-[focus-visible=true]:ring-emerald-500/30',
+  'data-[focus-visible=true]:ring-2',
+  'data-[focus-visible=true]:ring-offset-2',
 ];
 export const linkClasses = [
   'font-light',
