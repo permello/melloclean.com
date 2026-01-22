@@ -17,7 +17,7 @@ export default function Contact() {
   return (
     <section className='bg-white py-24' id='contact'>
       <div className='container mx-auto px-6'>
-        <div className='flex flex-col items-start gap-16 lg:flex-row'>
+        <div className='grid items-start gap-16 lg:grid-cols-2'>
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -41,9 +41,9 @@ export default function Contact() {
               {contactInfo.map((item) => (
                 <div
                   key={item.label}
-                  className='flex max-w-full items-start gap-4 rounded-2xl bg-slate-50 p-4 transition-colors hover:bg-emerald-50'
+                  className='flex items-start gap-4 rounded-2xl bg-slate-50 p-4 transition-colors hover:bg-emerald-50'
                 >
-                  <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600'>
+                  <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600'>
                     <item.icon className='h-6 w-6' />
                   </div>
                   <div>
