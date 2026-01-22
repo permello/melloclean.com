@@ -41,14 +41,16 @@ export default function Contact() {
               {contactInfo.map((item) => (
                 <div
                   key={item.label}
-                  className='flex items-start gap-4 rounded-2xl bg-slate-50 p-4 transition-colors hover:bg-emerald-50'
+                  className='rounded-2xl bg-slate-50 break-all transition-colors hover:bg-emerald-50'
                 >
-                  <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600'>
-                    <item.icon className='h-6 w-6' />
-                  </div>
-                  <div>
-                    <p className='text-sm text-slate-500'>{item.label}</p>
-                    <p className='font-semibold text-slate-900'>{item.value}</p>
+                  <div className='flex items-start gap-4 p-4'>
+                    <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600'>
+                      <item.icon className='h-6 w-6' />
+                    </div>
+                    <div>
+                      <p className='text-sm text-slate-500'>{item.label}</p>
+                      <p className='font-semibold text-slate-900'>{item.value}</p>
+                    </div>
                   </div>
                 </div>
               ))}
