@@ -46,7 +46,7 @@ export function Contact() {
                     </div>
                     <div>
                       <p className='text-sm text-slate-500'>{item.label}</p>
-                      <p className='text-[5.5cqi] font-semibold text-slate-900'>{item.value}</p>
+                      <p className='font-semibold text-slate-900 lg:text-[5.5cqi]'>{item.value}</p>
                     </div>
                   </div>
                 </div>

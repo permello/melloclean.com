@@ -87,24 +87,6 @@ export function Hero() {
                 alt='Professional cleaner'
                 className='relative w-full rounded-3xl object-cover shadow-2xl'
               />
-
-              {/* Floating card
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.6 }}
-                                className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center">
-                                        <span className="text-2xl font-bold text-white">5★</span>
-                                    </div>
-                                    <div>
-                                        <p className="font-bold text-slate-900">2,500+ Reviews</p>
-                                        <p className="text-slate-500 text-sm">Trusted by thousands</p>
-                                    </div>
-                                </div>
-                            </motion.div> */}
             </div>
           </motion.div>
         </div>
