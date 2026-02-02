@@ -12,7 +12,8 @@ export function WizardNavigation({
 }: WizardNavigationProps) {
   const { isFirstStep, isLastStep, nextStep, prevStep } = useWizard();
 
-  const handleNext = () => {
+  const handleNext = (event: React.MouseEvent) => {
+    event.preventDefault();
     if (!isLastStep) {
       nextStep();
     }
@@ -33,7 +34,7 @@ export function WizardNavigation({
           {completeLabel}
         </Button>
       ) : (
-        <Button type='button' onPress={handleNext}>
+        <Button type='button' onClick={handleNext}>
           {nextLabel}
         </Button>
       )}
