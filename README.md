@@ -1,24 +1,20 @@
-# Welcome to React Router!
+# Melloclean.com
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Cleaning company landing page built with React Router 7 (SSR mode).
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Tech Stack
 
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **React 19** - UI library
+- **React Router 7** - SSR framework (Vite-based)
+- **TypeScript 5.9** - Type safety
+- **Tailwind CSS 4** - Utility-first styling
+- **Vite 7** - Build tool
+- **React Aria** - Accessible component primitives
+- **Framer Motion** - Animations
 
 ## Getting Started
 
 ### Installation
-
-Install the dependencies:
 
 ```bash
 npm install
@@ -34,6 +30,12 @@ npm run dev
 
 Your application will be available at `http://localhost:5173`.
 
+### Type Checking
+
+```bash
+npm run typecheck
+```
+
 ## Building for Production
 
 Create a production build:
@@ -42,46 +44,52 @@ Create a production build:
 npm run build
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+Run the production server:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm run start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Project Structure
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+```
+frontend/
+├── components/     # Reusable UI components
+│   └── ui/         # Base components (button, heading, text)
+├── core/           # Shared utilities and configuration
+│   ├── config/     # App configuration (company info)
+│   └── util/       # Utilities (cn, mergeRef)
+├── pages/          # Page components and layouts
+│   └── landing/    # Landing page with section layouts
+├── root.tsx        # App root component
+└── routes.ts       # Route definitions
+```
 
-### DIY Deployment
+## Path Alias
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+`~/*` maps to `frontend/*`
 
-Make sure to deploy the output of `npm run build`
+```tsx
+import { cn } from '~/core/util/cn'
+```
+
+## Deployment
+
+### Docker
+
+```bash
+docker build -t melloclean .
+docker run -p 3000:3000 melloclean
+```
+
+### Manual
+
+Deploy the output of `npm run build`:
 
 ```
 ├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
+├── package-lock.json
 ├── build/
 │   ├── client/    # Static assets
 │   └── server/    # Server-side code
 ```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
