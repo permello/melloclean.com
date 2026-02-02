@@ -34,30 +34,11 @@ type SignupFormData = {
 
 export async function action({ request }: Route.ActionArgs): Promise<ActionData> {
   const formData = await request.formData();
+  const data = Object.fromEntries(formData.entries()) as SignupFormData;
 
-  const { firstName, lastName, email, password, confirmPassword, street, city, state, zipCode } =
-    Object.fromEntries(formData.entries()) as SignupFormData;
-  const errors = validateForm(
-    { firstName, lastName, email, password, confirmPassword, street, city, state, zipCode },
-    {
-      firstName: [(v) => validators.required(v, 'First name')],
-      lastName: [(v) => validators.required(v, 'Last name')],
-      email: [(v) => validators.required(v, 'Email'), validators.email],
-      password: [(v) => validators.required(v, 'Password'), (v) => validators.minLength(v, 8)],
-      confirmPassword: [
-        (v) => validators.required(v, 'Confirm password'),
-        (v) => validators.confirmPassword(v, password),
-      ],
-      street: [(v) => validators.required(v, 'Street address')],
-      city: [(v) => validators.required(v, 'City')],
-      state: [(v) => validators.required(v, 'State')],
-      zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
-    },
-  );
-
-  if (Object.keys(errors).length > 0) {
-    return { errors };
-  }
+  // Wizard component handles all validation client-side
+  // TODO: Actual account creation logic here
+  console.log('Creating account for:', data.email);
 
   return { success: true };
 }
@@ -90,6 +71,45 @@ const wizardSteps: WizardStepConfig[] = [
   {
     id: 'address',
     name: 'Service Address',
+    validate: (data) =>
+      validateForm(
+        {
+          street: data.street || '',
+          city: data.city || '',
+          state: data.state || '',
+          zipCode: data.zipCode || '',
+        },
+        {
+          street: [(v) => validators.required(v, 'Street address')],
+          city: [(v) => validators.required(v, 'City')],
+          state: [(v) => validators.required(v, 'State')],
+          zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
+        },
+      ),
+  },
+
+  {
+    id: 'address 2',
+    name: 'Service Address 2',
+    validate: (data) =>
+      validateForm(
+        {
+          street: data.street || '',
+          city: data.city || '',
+          state: data.state || '',
+          zipCode: data.zipCode || '',
+        },
+        {
+          street: [(v) => validators.required(v, 'Street address')],
+          city: [(v) => validators.required(v, 'City')],
+          state: [(v) => validators.required(v, 'State')],
+          zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
+        },
+      ),
+  },
+  {
+    id: 'address 3',
+    name: 'Service Address 3',
     validate: (data) =>
       validateForm(
         {
@@ -182,6 +202,96 @@ function WizardFormContent() {
       </WizardStep>
 
       <WizardStep id='address'>
+        <div className='space-y-4'>
+          <Input
+            name='street'
+            label='Street Address'
+            placeholder='123 Main St'
+            autoComplete='street-address'
+            value={formData.street || ''}
+            onChange={(value) => handleInputChange('street', value)}
+            error={combinedErrors?.street}
+          />
+
+          <div className='grid grid-cols-2 gap-4'>
+            <Input
+              name='city'
+              label='City'
+              placeholder='Houston'
+              autoComplete='address-level2'
+              value={formData.city || ''}
+              onChange={(value) => handleInputChange('city', value)}
+              error={combinedErrors?.city}
+            />
+            <Input
+              name='state'
+              label='State'
+              placeholder='TX'
+              autoComplete='address-level1'
+              value={formData.state || ''}
+              onChange={(value) => handleInputChange('state', value)}
+              error={combinedErrors?.state}
+            />
+          </div>
+
+          <Input
+            name='zipCode'
+            label='Zip Code'
+            placeholder='77001'
+            autoComplete='postal-code'
+            value={formData.zipCode || ''}
+            onChange={(value) => handleInputChange('zipCode', value)}
+            error={combinedErrors?.zipCode}
+          />
+        </div>
+      </WizardStep>
+
+      <WizardStep id='address 2'>
+        <div className='space-y-4'>
+          <Input
+            name='street'
+            label='Street Address'
+            placeholder='123 Main St'
+            autoComplete='street-address'
+            value={formData.street || ''}
+            onChange={(value) => handleInputChange('street', value)}
+            error={combinedErrors?.street}
+          />
+
+          <div className='grid grid-cols-2 gap-4'>
+            <Input
+              name='city'
+              label='City'
+              placeholder='Houston'
+              autoComplete='address-level2'
+              value={formData.city || ''}
+              onChange={(value) => handleInputChange('city', value)}
+              error={combinedErrors?.city}
+            />
+            <Input
+              name='state'
+              label='State'
+              placeholder='TX'
+              autoComplete='address-level1'
+              value={formData.state || ''}
+              onChange={(value) => handleInputChange('state', value)}
+              error={combinedErrors?.state}
+            />
+          </div>
+
+          <Input
+            name='zipCode'
+            label='Zip Code'
+            placeholder='77001'
+            autoComplete='postal-code'
+            value={formData.zipCode || ''}
+            onChange={(value) => handleInputChange('zipCode', value)}
+            error={combinedErrors?.zipCode}
+          />
+        </div>
+      </WizardStep>
+
+      <WizardStep id='address 3'>
         <div className='space-y-4'>
           <Input
             name='street'

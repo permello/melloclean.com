@@ -19,6 +19,13 @@ export function WizardNavigation({
     }
   };
 
+  const handleSubmit = (event: React.MouseEvent) => {
+    const isValid = nextStep();
+    if (!isValid) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <div
       className={cn('flex gap-3', isFirstStep ? 'justify-center' : 'justify-between', className)}
@@ -30,7 +37,7 @@ export function WizardNavigation({
       )}
 
       {isLastStep ? (
-        <Button type='submit' disabled={isSubmitting} isLoading={isSubmitting}>
+        <Button type='submit' disabled={isSubmitting} isLoading={isSubmitting} onClick={handleSubmit}>
           {completeLabel}
         </Button>
       ) : (
