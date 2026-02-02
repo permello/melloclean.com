@@ -22,6 +22,7 @@ export interface WizardStepProps {
 
 export interface WizardIndicatorProps {
   className?: string;
+  maxVisibleSteps?: number;
 }
 
 export interface WizardNavigationProps {
