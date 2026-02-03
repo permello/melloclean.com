@@ -12,11 +12,11 @@ import { Input } from '~/components/ui/input';
 import { Text } from '~/components/ui/text';
 import {
   Wizard,
-  WizardStep,
+  WizardStage,
   WizardIndicator,
   WizardNavigation,
   useWizard,
-  type WizardStepConfig,
+  type WizardStageConfig,
 } from '~/components/ui/wizard';
 import { validators, validateForm, type ValidationErrors } from '~/core/util/validation';
 import { useId } from 'react';
@@ -67,7 +67,7 @@ export async function action({ request }: Route.ActionArgs): Promise<ActionData>
 /**
  * Wizard step configurations with validation rules.
  */
-const wizardSteps: WizardStepConfig[] = [
+const WizardStages: WizardStageConfig[] = [
   {
     id: 'account',
     name: 'Account',
@@ -136,7 +136,7 @@ function WizardFormContent() {
     <>
       <WizardIndicator className='mb-6' />
 
-      <WizardStep id='account'>
+      <WizardStage id='account'>
         <div className='space-y-4'>
           <div className='grid grid-cols-2 gap-4'>
             <Input
@@ -191,9 +191,9 @@ function WizardFormContent() {
             error={combinedErrors?.confirmPassword}
           />
         </div>
-      </WizardStep>
+      </WizardStage>
 
-      <WizardStep id='address'>
+      <WizardStage id='address'>
         <div className='space-y-4'>
           <Input
             name='street'
@@ -236,9 +236,9 @@ function WizardFormContent() {
             error={combinedErrors?.zipCode}
           />
         </div>
-      </WizardStep>
+      </WizardStage>
 
-      <WizardStep id='address 2'>
+      <WizardStage id='address 2'>
         <div className='space-y-4'>
           <Input
             name='street'
@@ -281,9 +281,9 @@ function WizardFormContent() {
             error={combinedErrors?.zipCode}
           />
         </div>
-      </WizardStep>
+      </WizardStage>
 
-      <WizardStep id='address 3'>
+      <WizardStage id='address 3'>
         <div className='space-y-4'>
           <Input
             name='street'
@@ -326,7 +326,7 @@ function WizardFormContent() {
             error={combinedErrors?.zipCode}
           />
         </div>
-      </WizardStep>
+      </WizardStage>
 
       {/* Hidden inputs to submit all form data */}
       {Object.entries(formData).map(([key, value]) => (
@@ -352,7 +352,7 @@ export default function JoinPage() {
   return (
     <AuthLayout title='Create your account' subtitle='Join us to book your cleaning services'>
       <Form method='post'>
-        <Wizard steps={wizardSteps}>
+        <Wizard stages={WizardStages}>
           <WizardFormContent />
         </Wizard>
       </Form>

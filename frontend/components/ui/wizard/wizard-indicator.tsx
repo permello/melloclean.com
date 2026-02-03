@@ -32,21 +32,21 @@ const getVisibleRange = (total: number, current: number, max: number) => {
 };
 
 /**
- * Visual step indicator showing progress through the wizard.
+ * Visual stage indicator showing progress through the wizard.
  * Displays numbered circles with labels and connecting lines.
- * Supports pagination for wizards with many steps.
+ * Supports pagination for wizards with many stages.
  *
  * @param props - Component props
- * @param props.maxVisibleSteps - Maximum steps shown at once
- * @returns Step indicator component
+ * @param props.maxVisibleStages - Maximum stages shown at once
+ * @returns Stage indicator component
  */
-export function WizardIndicator({ className, maxVisibleSteps = 3 }: WizardIndicatorProps) {
-  const { steps, currentStep } = useWizard();
+export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndicatorProps) {
+  const { stages, currentStep } = useWizard();
 
-  const { start, end } = getVisibleRange(steps.length, currentStep, maxVisibleSteps);
-  const visibleSteps = steps.slice(start, end);
+  const { start, end } = getVisibleRange(stages.length, currentStep, maxVisibleStages);
+  const visibleStages = stages.slice(start, end);
 
-  const getStepStatus = (index: number) => {
+  const getStageStatus = (index: number) => {
     if (index < currentStep) return 'completed';
     if (index === currentStep) return 'active';
     return 'pending';
@@ -57,17 +57,17 @@ export function WizardIndicator({ className, maxVisibleSteps = 3 }: WizardIndica
       {start > 0 && (
         <div className='pointer-events-none absolute top-0 left-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent' />
       )}
-      {end < steps.length && (
+      {end < stages.length && (
         <div className='pointer-events-none absolute top-0 right-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent' />
       )}
       <div className='flex items-stretch justify-center gap-1'>
-        {visibleSteps.map((step, visibleIndex) => {
+        {visibleStages.map((stage, visibleIndex) => {
           const actualIndex = start + visibleIndex;
-          const status = getStepStatus(actualIndex);
+          const status = getStageStatus(actualIndex);
           const isCompleted = status === 'completed';
 
           return (
-            <div key={step.id} className='flex items-stretch'>
+            <div key={stage.id} className='flex items-stretch'>
               <div className='flex flex-col items-center'>
                 <motion.div
                   className={cn(circleVariants({ status }))}
@@ -89,10 +89,10 @@ export function WizardIndicator({ className, maxVisibleSteps = 3 }: WizardIndica
                     actualIndex + 1
                   )}
                 </motion.div>
-                <span className={cn(labelVariants({ status }))}>{step.name}</span>
+                <span className={cn(labelVariants({ status }))}>{stage.name}</span>
               </div>
 
-              {visibleIndex < visibleSteps.length - 1 && (
+              {visibleIndex < visibleStages.length - 1 && (
                 <div
                   className={cn(
                     connectorVariants({

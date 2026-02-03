@@ -22,17 +22,17 @@ export function WizardNavigation({
   completeLabel = 'Complete',
   className,
 }: WizardNavigationProps) {
-  const { isFirstStep, isLastStep, nextStep, prevStep } = useWizard();
+  const { isFirstStage, isLastStage, nextStage, prevStage } = useWizard();
 
   const handleNext = (event: React.MouseEvent) => {
     event.preventDefault();
-    if (!isLastStep) {
-      nextStep();
+    if (!isLastStage) {
+      nextStage();
     }
   };
 
   const handleSubmit = (event: React.MouseEvent) => {
-    const isValid = nextStep();
+    const isValid = nextStage();
     if (!isValid) {
       event.preventDefault();
     }
@@ -40,15 +40,15 @@ export function WizardNavigation({
 
   return (
     <div
-      className={cn('flex gap-3', isFirstStep ? 'justify-center' : 'justify-between', className)}
+      className={cn('flex gap-3', isFirstStage ? 'justify-center' : 'justify-between', className)}
     >
-      {!isFirstStep && (
-        <Button type='button' variant='secondary' onPress={prevStep}>
+      {!isFirstStage && (
+        <Button type='button' variant='secondary' onPress={prevStage}>
           {backLabel}
         </Button>
       )}
 
-      {isLastStep ? (
+      {isLastStage ? (
         <Button
           type='submit'
           disabled={isSubmitting}

@@ -6,22 +6,22 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '~/core/util/cn';
 import { useWizard } from './wizard-context';
-import type { WizardStepProps } from './ts/types';
+import type { WizardStageProps } from './ts/types';
 
 /**
- * Container for a single wizard step with animated transitions.
- * Only renders when the step is active.
+ * Container for a single wizard stage with animated transitions.
+ * Only renders when the stage is active.
  *
  * @param props - Component props
- * @param props.id - Step identifier matching the wizard configuration
- * @param props.children - Step content
+ * @param props.id - Stage identifier matching the wizard configuration
+ * @param props.children - Stage content
  * @returns Animated step container or null if not active
  */
-export function WizardStep({ id, children, className }: WizardStepProps) {
-  const { steps, currentStep } = useWizard();
+export function WizardStage({ id, children, className }: WizardStageProps) {
+  const { stages, currentStep } = useWizard();
 
-  const stepIndex = steps.findIndex((step) => step.id === id);
-  const isActive = stepIndex === currentStep;
+  const stageIndex = stages.findIndex((stage) => stage.id === id);
+  const isActive = stageIndex === currentStep;
 
   return (
     <AnimatePresence mode='wait'>

@@ -23,9 +23,9 @@ import type { WizardProps } from './ts/types';
  * @param props - Component props
  * @returns Wizard container with context provider
  */
-export function Wizard({ steps, children, className }: WizardProps) {
+export function Wizard({ stages, children, className }: WizardProps) {
   return (
-    <WizardProvider steps={steps}>
+    <WizardProvider stages={stages}>
       <div className={cn(className)}>{children}</div>
     </WizardProvider>
   );
