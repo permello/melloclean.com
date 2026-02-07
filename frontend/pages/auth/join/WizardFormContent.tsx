@@ -1,3 +1,8 @@
+/**
+ * @copyright 2026 Eduardo Turcios. All rights reserved.
+ * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
+ */
+
 import { useActionData, useNavigation } from 'react-router';
 import { Input } from '~/components/ui/input';
 import { useWizard, WizardIndicator, WizardNavigation, WizardStage } from '~/components/ui/wizard';
@@ -18,6 +23,12 @@ export function WizardFormContent() {
 
   const combinedErrors = { ...errors, ...actionData?.errors };
 
+  /**
+   * Updates a single form field in the wizard's shared form state.
+   *
+   * @param name - The field name to update
+   * @param value - The new value for the field
+   */
   const handleChange = (name: string, value: string) => {
     updateFormData({ [name]: value });
   };

@@ -24,6 +24,7 @@ export function WizardNavigation({
 }: WizardNavigationProps) {
   const { isFirstStage, isLastStage, nextStage, prevStage } = useWizard();
 
+  /** Advances to the next stage without submitting the form. */
   const handleNext = (event: React.MouseEvent) => {
     event.preventDefault();
     if (!isLastStage) {
@@ -31,6 +32,7 @@ export function WizardNavigation({
     }
   };
 
+  /** Validates the final stage and allows form submission if valid. */
   const handleSubmit = (event: React.MouseEvent) => {
     const isValid = nextStage();
     if (!isValid) {

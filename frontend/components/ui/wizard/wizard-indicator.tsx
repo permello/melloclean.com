@@ -46,6 +46,12 @@ export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndic
   const { start, end } = getVisibleRange(stages.length, currentStep, maxVisibleStages);
   const visibleStages = stages.slice(start, end);
 
+  /**
+   * Determines the visual status of a stage by its index.
+   *
+   * @param index - The absolute stage index
+   * @returns 'completed', 'active', or 'pending'
+   */
   const getStageStatus = (index: number) => {
     if (index < currentStep) return 'completed';
     if (index === currentStep) return 'active';

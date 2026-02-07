@@ -1,6 +1,15 @@
+/**
+ * @copyright 2026 Eduardo Turcios. All rights reserved.
+ * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
+ */
+
 import type { WizardStageConfig } from '~/components/ui/wizard';
 import { validators } from '~/core/util/validation';
 
+/**
+ * Account creation stage config.
+ * Validates first name, last name, email, password, and password confirmation.
+ */
 const AccountStage: WizardStageConfig = {
   id: 'account',
   name: 'Account',
@@ -16,6 +25,10 @@ const AccountStage: WizardStageConfig = {
   },
 };
 
+/**
+ * Service address stage config.
+ * Validates street, city, state, and zip code.
+ */
 const AddressStage: WizardStageConfig = {
   id: 'address',
   name: 'Service Address',

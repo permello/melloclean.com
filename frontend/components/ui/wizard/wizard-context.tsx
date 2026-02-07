@@ -50,10 +50,12 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
   const isFirstStage = currentStep === 0;
   const isLastStage = currentStep === stages.length - 1;
 
+  /** Merges new field values into the existing form data. */
   const updateFormData = useCallback((data: Record<string, string>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   }, []);
 
+  /** Validates the current stage and advances to the next if valid. Returns true on success. */
   const nextStage = useCallback((): boolean => {
     const currentStepConfig = stages[currentStep];
     console.log('Validating stage:');
@@ -76,6 +78,7 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
     return true;
   }, [currentStep, stages, formData, isLastStage]);
 
+  /** Returns to the previous stage, clearing any validation errors. */
   const prevStage = useCallback(() => {
     if (!isFirstStage) {
       setErrors({});
