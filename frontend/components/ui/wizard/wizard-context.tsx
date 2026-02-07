@@ -5,7 +5,7 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import type { WizardContextValue, WizardStageConfig } from './ts/types';
-import type { ValidationErrors } from '~/core/util/validation';
+import { validateForm, type ValidationErrors } from '~/core/util/validation';
 
 /**
  * React context for wizard state and actions.
@@ -56,11 +56,11 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
 
   const nextStage = useCallback((): boolean => {
     const currentStepConfig = stages[currentStep];
-
+    console.log('Validating stage:');
     if (currentStepConfig.validate === undefined) {
       return false;
     }
-    const validationErrors = currentStepConfig.validate(formData);
+    const validationErrors = validateForm(formData, currentStepConfig.validate);
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);

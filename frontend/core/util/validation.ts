@@ -28,6 +28,7 @@ export const validators = {
     value !== password ? 'Passwords do not match' : null,
 };
 
+export type ValidatorFn = (value: string, ...args: [string?]) => string | null;
 /**
  * Record of field names to error messages.
  */
@@ -42,14 +43,15 @@ export type ValidationErrors = Record<string, string>;
  */
 export function validateForm<T extends Record<string, string>>(
   data: T,
-  rules: Record<keyof T, ((value: string) => string | null)[]>,
+  rules: Record<keyof T, ValidatorFn[]>,
 ): ValidationErrors {
   const errors: ValidationErrors = {};
 
-  for (const [field, fieldRules] of Object.entries(rules)) {
-    const value = data[field as keyof T] || '';
-    for (const rule of fieldRules as ((value: string) => string | null)[]) {
-      const error = rule(value);
+  for (const field in rules) {
+    const value = data[field] ?? '';
+
+    for (const rule of rules[field]) {
+      const error = rule(value, data.password); // example
       if (error) {
         errors[field] = error;
         break;

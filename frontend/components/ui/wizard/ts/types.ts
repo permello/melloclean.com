@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from 'react';
-import type { ValidationErrors } from '~/core/util/validation';
+import type { ValidationErrors, ValidatorFn } from '~/core/util/validation';
 
 /**
  * Configuration for a single wizard stage.
@@ -15,7 +15,7 @@ export interface WizardStageConfig {
   /** Display name shown in the indicator */
   name: string;
   /** Optional validation function for the stage */
-  validate?: (formData: Record<string, string>) => ValidationErrors;
+  validate?: Record<string, ValidatorFn[]>;
 }
 
 /**
