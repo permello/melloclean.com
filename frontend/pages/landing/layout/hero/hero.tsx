@@ -5,10 +5,10 @@
 
 import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
+import { useBooking } from '../booking/booking-context';
 
 /**
  * Hero section with headline, benefits, and call-to-action buttons.
@@ -17,6 +17,8 @@ import { Text } from '~/components/ui/text';
  * @returns Hero section component
  */
 export function Hero() {
+  const { openBooking } = useBooking();
+
   const benefits = [
     'Eco-friendly Products',
     'Trained Professionals',
@@ -69,13 +71,13 @@ export function Hero() {
             </div>
 
             <div className='flex flex-wrap gap-4'>
-              {/* <Link to={createPageUrl("Dashboard")}> */}
-              <Link to={''}>
-                <Button className='shadow-lg shadow-emerald-200 data-[hovered=true]:shadow-xl data-[hovered=true]:shadow-emerald-300'>
-                  Book Now
-                  <ArrowRight className='ml-2 h-5 w-5' />
-                </Button>
-              </Link>
+              <Button
+                onPress={openBooking}
+                className='shadow-lg shadow-emerald-200 data-[hovered=true]:shadow-xl data-[hovered=true]:shadow-emerald-300'
+              >
+                Book Now
+                <ArrowRight className='ml-2 h-5 w-5' />
+              </Button>
               <Button
                 variant='secondary'
                 className='border-2 border-slate-200 data-[hovered=true]:border-emerald-300 data-[hovered=true]:bg-emerald-50'

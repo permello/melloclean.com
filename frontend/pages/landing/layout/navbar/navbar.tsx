@@ -9,6 +9,7 @@ import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '~/components/ui/button';
 import { companyConfig } from '~/core/config';
+import { useBooking } from '../booking/booking-context';
 
 /**
  * Navigation bar with responsive mobile menu.
@@ -17,6 +18,7 @@ import { companyConfig } from '~/core/config';
  * @returns Navbar component with desktop and mobile views
  */
 export function Navbar() {
+  const { openBooking } = useBooking();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -67,9 +69,9 @@ export function Navbar() {
               <Link to={'/login'}>
                 <button className='text-slate-600 hover:text-emerald-600'>Customer Login</button>
               </Link>
-              <Link to={''}>
-                <Button size='small'>Book Now</Button>
-              </Link>
+              <Button size='small' onPress={openBooking}>
+                Book Now
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -105,8 +107,18 @@ export function Navbar() {
                   </a>
                 ))}
                 <hr className='my-4' />
-                <Link to={''} onClick={() => setMobileOpen(false)}>
-                  <button className='w-full rounded-full bg-emerald-600 py-6 text-lg text-white hover:bg-emerald-700'>
+                <Button
+                  size='large'
+                  onPress={() => {
+                    setMobileOpen(false);
+                    openBooking();
+                  }}
+                  className='w-full'
+                >
+                  Book Now
+                </Button>
+                <Link to='/login' onClick={() => setMobileOpen(false)}>
+                  <button className='w-full rounded-full bg-slate-100 py-6 text-lg text-slate-900 hover:bg-slate-200'>
                     Customer Login
                   </button>
                 </Link>

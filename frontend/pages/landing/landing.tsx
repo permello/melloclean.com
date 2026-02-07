@@ -5,7 +5,17 @@
 
 import type { Route } from './+types/landing';
 
-import { Navbar, Hero, Services, Pricing, Testimonials, Contact, Footer } from './layout';
+import {
+  Navbar,
+  Hero,
+  Services,
+  Pricing,
+  Testimonials,
+  Contact,
+  Footer,
+  BookingProvider,
+  BookingModal,
+} from './layout';
 import { companyConfig } from '~/core/config';
 
 /**
@@ -29,14 +39,17 @@ export function meta({}: Route.MetaArgs) {
  */
 export default function Landing() {
   return (
-    <main className='min-h-screen'>
-      <Navbar />
-      <Hero />
-      <Services />
-      <Pricing />
-      <Testimonials />
-      <Contact />
-      <Footer />
-    </main>
+    <BookingProvider>
+      <main className='min-h-screen'>
+        <Navbar />
+        <Hero />
+        <Services />
+        <Pricing />
+        <Testimonials />
+        <Contact />
+        <Footer />
+        <BookingModal />
+      </main>
+    </BookingProvider>
   );
 }

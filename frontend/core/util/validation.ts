@@ -26,6 +26,12 @@ export const validators = {
   /** Validates that password confirmation matches */
   confirmPassword: (value: string, data: Record<string, string>): string | null =>
     value !== data.password ? 'Passwords do not match' : null,
+
+  /** Validates that a numeric string meets a minimum value */
+  minNumber: (value: string, min: number, message?: string): string | null =>
+    isNaN(Number(value)) || Number(value) < min
+      ? message || `Must be at least ${min}`
+      : null,
 };
 
 export type ValidatorFn<T extends Record<string, string> = Record<string, string>> = (
