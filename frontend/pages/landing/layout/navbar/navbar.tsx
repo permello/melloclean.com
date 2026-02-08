@@ -3,13 +3,12 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { useState, useEffect } from 'react';
-import { Sparkles, Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Sparkles, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '~/components/ui/button';
 import { companyConfig } from '~/core/config';
-import { useBooking } from '../booking/booking-context';
 
 /**
  * Navigation bar with responsive mobile menu.
@@ -18,7 +17,6 @@ import { useBooking } from '../booking/booking-context';
  * @returns Navbar component with desktop and mobile views
  */
 export function Navbar() {
-  const { openBooking } = useBooking();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -74,7 +72,7 @@ export function Navbar() {
                   Customer Login
                 </button>
               </Link>
-              <Button size='small' onPress={openBooking} aria-label='Book a cleaning'>
+              <Button size='small' aria-label='Book a cleaning'>
                 Book Now
               </Button>
             </div>
@@ -117,7 +115,6 @@ export function Navbar() {
                   size='large'
                   onPress={() => {
                     setMobileOpen(false);
-                    openBooking();
                   }}
                   className='w-full'
                   aria-label='Book a cleaning'

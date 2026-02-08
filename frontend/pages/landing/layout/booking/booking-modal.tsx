@@ -8,7 +8,6 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { ModalTrigger, type ModalTriggerProps } from '~/components/ui/modal/modal-trigger';
 import { Wizard, useWizard } from '~/components/ui/wizard';
-import { useBooking } from './booking-context';
 import { BookingFormContent } from './booking-form-content';
 import { BOOKING_STORAGE_KEY, bookingStages } from './ts/constants';
 
@@ -22,7 +21,6 @@ export function BookingModal(
   props: ModalTriggerProps & { title?: string; showCloseButton?: boolean },
 ) {
   const { title, showCloseButton } = props;
-  const { isBookingOpen, closeBooking } = useBooking();
   const navigate = useNavigate();
 
   /**
@@ -32,10 +30,9 @@ export function BookingModal(
   const handleSave = useCallback(
     (formData: Record<string, string>) => {
       localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(formData));
-      closeBooking();
       navigate('/join');
     },
-    [closeBooking, navigate],
+    [navigate],
   );
 
   return (

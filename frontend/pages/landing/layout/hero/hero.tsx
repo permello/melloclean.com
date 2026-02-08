@@ -3,12 +3,11 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
-import { useBooking } from '../booking/booking-context';
 import { BookingModal } from '../booking/booking-modal';
 
 /**
@@ -18,8 +17,6 @@ import { BookingModal } from '../booking/booking-modal';
  * @returns Hero section component
  */
 export function Hero() {
-  const { openBooking } = useBooking();
-
   const benefits = [
     'Eco-friendly Products',
     'Trained Professionals',
