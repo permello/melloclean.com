@@ -3,9 +3,9 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import type { WizardStageConfig } from '~/components/ui/wizard';
 import type { SelectOption } from '~/components/ui/select';
 import type { ToggleOption } from '~/components/ui/toggle-button-group';
+import type { WizardStageConfig } from '~/components/ui/wizard';
 import { validators, type ValidatorFn } from '~/core/util/validation';
 
 /**
@@ -152,7 +152,6 @@ export const bookingStages: WizardStageConfig[] = [
     id: 'visit',
     name: 'Your Visit',
     validate: {
-      priorityAreas: [(v: string) => validators.required(v, 'Priority areas')],
       preferredDate: [(v: string) => validators.required(v, 'Preferred date')],
       specialOccasion: [
         (v: string, data: Record<string, string>) =>

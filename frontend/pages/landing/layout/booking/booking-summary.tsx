@@ -105,7 +105,9 @@ export function BookingSummary({ formData }: BookingSummaryProps) {
         </Text>
         <div className='grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'>
           <span className='text-slate-500'>Priority Areas</span>
-          <span className='text-slate-900'>{priorityAreas.join(', ')}</span>
+          <span className='text-slate-900'>
+            {priorityAreas.length > 0 ? priorityAreas.join(', ') : 'None selected'}
+          </span>
           <span className='text-slate-500'>Preferred Date</span>
           <span className='text-slate-900'>{formData.preferredDate}</span>
           {formData.hasSpecialOccasion === 'yes' && (
