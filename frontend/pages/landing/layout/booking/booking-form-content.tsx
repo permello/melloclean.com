@@ -6,7 +6,7 @@
 import { useCallback } from 'react';
 import { WizardIndicator, WizardNavigation, WizardStage, useWizard } from '~/components/ui/wizard';
 import { GeneralSection, HomeSection, SummarySection, VisitSection } from './components';
-
+import { GENERAL_CONFIG, HOME_CONFIG, SUMMARY_CONFIG, VISIT_CONFIG } from './ts/constants';
 /**
  * Internal form content component rendered inside the Wizard.
  * Provides access to wizard context for form data and error state.
@@ -34,17 +34,17 @@ export function BookingFormContent() {
       <WizardIndicator maxVisibleStages={4} className='mb-6' />
 
       {/* Stage 1: General Info */}
-      <WizardStage id='general'>
+      <WizardStage id={GENERAL_CONFIG.id}>
         <GeneralSection formData={formData} setField={setField} errors={errors} />
       </WizardStage>
 
       {/* Stage 2: Home Details */}
-      <WizardStage id='home'>
+      <WizardStage id={HOME_CONFIG.id}>
         <HomeSection formData={formData} setField={setField} errors={errors} />
       </WizardStage>
 
       {/* Stage 3: About Your Visit */}
-      <WizardStage id='visit'>
+      <WizardStage id={VISIT_CONFIG.id}>
         <VisitSection
           priorityKeys={priorityKeys}
           setField={setField}
@@ -54,7 +54,7 @@ export function BookingFormContent() {
       </WizardStage>
 
       {/* Stage 4: Summary */}
-      <WizardStage id='summary'>
+      <WizardStage id={SUMMARY_CONFIG.id}>
         <SummarySection formData={formData} />
       </WizardStage>
 

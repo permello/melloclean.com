@@ -7,9 +7,26 @@ import { X } from 'lucide-react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { ModalTrigger, type ModalTriggerProps } from '~/components/ui/modal/modal-trigger';
-import { Wizard, useWizard } from '~/components/ui/wizard';
+import { Wizard, useWizard, type WizardStageConfig } from '~/components/ui/wizard';
 import { BookingFormContent } from './booking-form-content';
-import { BOOKING_STORAGE_KEY, bookingStages } from './ts/constants';
+import {
+  BOOKING_STORAGE_KEY,
+  GENERAL_CONFIG,
+  HOME_CONFIG,
+  SUMMARY_CONFIG,
+  VISIT_CONFIG,
+} from './ts/constants';
+
+/**
+ * Wizard stage configurations for the booking flow.
+ * Each stage defines an id, name, and validation rules.
+ */
+export const bookingStages: WizardStageConfig[] = [
+  GENERAL_CONFIG,
+  HOME_CONFIG,
+  VISIT_CONFIG,
+  SUMMARY_CONFIG,
+];
 
 /**
  * Booking modal component that wraps the multi-step wizard in a modal dialog.
