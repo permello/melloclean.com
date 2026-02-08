@@ -5,15 +5,51 @@
 
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
-import { cleaningTypeLabels, lastCleanedLabels, priorityAreaLabels } from './ts/constants';
 
 /**
  * Props for the BookingSummary component.
  */
-interface BookingSummaryProps {
+interface SummarySectionProps {
   /** The collected form data to display */
   formData: Record<string, string>;
 }
+/**
+ * Human-readable labels for cleaning type keys.
+ */
+export const cleaningTypeLabels: Record<string, string> = {
+  standard: 'Standard',
+  deep: 'Deep',
+  move: 'Move In/Out',
+  office: 'Office',
+};
+
+/**
+ * Human-readable labels for last-cleaned keys.
+ */
+export const lastCleanedLabels: Record<string, string> = {
+  never: 'Never',
+  '1month': 'Within 1 month',
+  '1-3months': '1-3 months',
+  '3-6months': '3-6 months',
+  '6-12months': '6-12 months',
+  '1+year': '1+ year',
+};
+
+/**
+ * Human-readable labels for priority area keys.
+ */
+export const priorityAreaLabels: Record<string, string> = {
+  bathrooms: 'Bathrooms',
+  kitchen: 'Kitchen',
+  bedrooms: 'Bedrooms',
+  floors: 'Floors',
+  sinks: 'Sinks',
+  dusting: 'Dusting',
+  windows: 'Windows',
+  appliances: 'Appliances',
+  baseboards: 'Baseboards',
+  garage: 'Garage',
+};
 
 /**
  * Generates a cleaning recommendation based on dirtiness level and last cleaning date.
@@ -43,7 +79,7 @@ function getRecommendation(dirtiness: string, lastCleaned: string): string {
  * @param props - Component props
  * @returns Rendered summary view with recommendation card
  */
-export function BookingSummary({ formData }: BookingSummaryProps) {
+export function SummarySection({ formData }: SummarySectionProps) {
   const priorityAreas = formData.priorityAreas
     ? formData.priorityAreas.split(',').map((k) => priorityAreaLabels[k] || k)
     : [];

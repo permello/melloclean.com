@@ -4,21 +4,8 @@
  */
 
 import { useCallback } from 'react';
-import { Heading } from '~/components/ui/heading';
-import { Input } from '~/components/ui/input';
-import { Select } from '~/components/ui/select';
-import { Slider } from '~/components/ui/slider';
-import { ToggleButtonGroup } from '~/components/ui/toggle-button-group';
 import { WizardIndicator, WizardNavigation, WizardStage, useWizard } from '~/components/ui/wizard';
-import { BookingSummary } from './booking-summary';
-import {
-  bathroomOptions,
-  bedroomOptions,
-  cleaningTypeOptions,
-  lastCleanedOptions,
-  occasionOptions,
-  priorityAreaOptions,
-} from './ts/constants';
+import { GeneralSection, HomeSection, SummarySection, VisitSection } from './components';
 
 /**
  * Internal form content component rendered inside the Wizard.
@@ -48,125 +35,27 @@ export function BookingFormContent() {
 
       {/* Stage 1: General Info */}
       <WizardStage id='general'>
-        <div className='space-y-6'>
-          <Heading level={5} className='mb-2'>
-            General Info
-          </Heading>
-          <Select
-            label='Cleaning Type'
-            placeholder='Select cleaning type'
-            options={cleaningTypeOptions}
-            selectedKey={formData.cleaningType || ''}
-            onSelectionChange={(key) => setField('cleaningType', key)}
-            errorMessage={errors.cleaningType}
-          />
-          <Slider
-            label='Dirtiness Scale'
-            hint='1 = spotless, 10 = almost unlivable'
-            minValue={1}
-            maxValue={10}
-            step={1}
-            value={Number(formData.dirtiness) || 1}
-            onChange={(val) => setField('dirtiness', String(val))}
-            showValue
-            errorMessage={errors.dirtiness}
-          />
-        </div>
+        <GeneralSection formData={formData} setField={setField} errors={errors} />
       </WizardStage>
 
       {/* Stage 2: Home Details */}
       <WizardStage id='home'>
-        <div className='space-y-6'>
-          <Heading level={5} className='mb-2'>
-            Home Details
-          </Heading>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-            <Select
-              label='Bedrooms'
-              placeholder='Select'
-              options={bedroomOptions}
-              selectedKey={formData.bedrooms || ''}
-              onSelectionChange={(key) => setField('bedrooms', key)}
-              errorMessage={errors.bedrooms}
-            />
-            <Select
-              label='Bathrooms'
-              placeholder='Select'
-              options={bathroomOptions}
-              selectedKey={formData.bathrooms || ''}
-              onSelectionChange={(key) => setField('bathrooms', key)}
-              errorMessage={errors.bathrooms}
-            />
-          </div>
-          <Input
-            label='Square Footage'
-            aria-label='Square footage of your home'
-            type='number'
-            placeholder='e.g. 1500'
-            value={formData.squareFootage || ''}
-            onChange={(val) => setField('squareFootage', val)}
-            errorMessage={errors.squareFootage}
-          />
-          <Select
-            label='Last Professionally Cleaned'
-            placeholder='Select'
-            options={lastCleanedOptions}
-            selectedKey={formData.lastCleaned || ''}
-            onSelectionChange={(key) => setField('lastCleaned', key)}
-            errorMessage={errors.lastCleaned}
-          />
-        </div>
+        <HomeSection formData={formData} setField={setField} errors={errors} />
       </WizardStage>
 
       {/* Stage 3: About Your Visit */}
       <WizardStage id='visit'>
-        <div className='space-y-6'>
-          <Heading level={5} className='mb-2'>
-            About Your Visit
-          </Heading>
-          <ToggleButtonGroup
-            label='Priority areas to clean'
-            options={priorityAreaOptions}
-            selectedKeys={priorityKeys}
-            onSelectionChange={(keys) => setField('priorityAreas', keys.join(','))}
-            errorMessage={errors.priorityAreas}
-          />
-          <ToggleButtonGroup
-            label='Special occasion?'
-            options={occasionOptions}
-            selectedKeys={formData.hasSpecialOccasion ? [formData.hasSpecialOccasion] : []}
-            onSelectionChange={(keys) => {
-              const value = keys[keys.length - 1] || '';
-              setField('hasSpecialOccasion', value);
-              if (value !== 'yes') {
-                setField('specialOccasion', '');
-              }
-            }}
-          />
-          {formData.hasSpecialOccasion === 'yes' && (
-            <Input
-              label='Describe the occasion'
-              aria-label='Describe the special occasion'
-              placeholder='e.g. Housewarming party, Holiday guests'
-              value={formData.specialOccasion || ''}
-              onChange={(val) => setField('specialOccasion', val)}
-              errorMessage={errors.specialOccasion}
-            />
-          )}
-          <Input
-            label='Preferred Date'
-            aria-label='Preferred cleaning date'
-            type='date'
-            value={formData.preferredDate || ''}
-            onChange={(val) => setField('preferredDate', val)}
-            errorMessage={errors.preferredDate}
-          />
-        </div>
+        <VisitSection
+          priorityKeys={priorityKeys}
+          setField={setField}
+          errors={errors}
+          formData={formData}
+        />
       </WizardStage>
 
       {/* Stage 4: Summary */}
       <WizardStage id='summary'>
-        <BookingSummary formData={formData} />
+        <SummarySection formData={formData} />
       </WizardStage>
 
       <WizardNavigation className='mt-8' completeLabel='Confirm & Create Account' />
