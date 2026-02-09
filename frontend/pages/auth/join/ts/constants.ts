@@ -10,7 +10,7 @@ import { validators } from '~/core/util/validation';
  * Account creation stage config.
  * Validates first name, last name, email, password, and password confirmation.
  */
-const AccountStage: WizardStageConfig = {
+export const ACCOUNT_CONFIG: WizardStageConfig = {
   id: 'account',
   name: 'Account',
   validate: {
@@ -29,7 +29,7 @@ const AccountStage: WizardStageConfig = {
  * Service address stage config.
  * Validates street, city, state, and zip code.
  */
-const AddressStage: WizardStageConfig = {
+export const ADDRESS_CONFIG: WizardStageConfig = {
   id: 'address',
   name: 'Service Address',
   validate: {
@@ -39,8 +39,3 @@ const AddressStage: WizardStageConfig = {
     zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
   },
 };
-
-/**
- * Wizard step configurations with validation rules.
- */
-export const WizardStages: WizardStageConfig[] = [AccountStage, AddressStage];

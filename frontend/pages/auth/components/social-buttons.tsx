@@ -3,8 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { GoogleLoginButton } from './google-login-button';
+import React from 'react';
+import { DividerWithText } from './divider-with-text';
 import { FacebookLoginButton } from './facebook-login-button';
+import { GoogleLoginButton } from './google-login-button';
 
 /**
  * Container for social authentication buttons.
@@ -14,10 +16,13 @@ import { FacebookLoginButton } from './facebook-login-button';
  */
 const SocialButtons: React.FC = () => {
   return (
-    <div className='space-y-3'>
-      <GoogleLoginButton />
-      <FacebookLoginButton />
-    </div>
+    <React.Fragment>
+      <DividerWithText text='Or continue with' />
+      <div className='space-y-3'>
+        <GoogleLoginButton />
+        <FacebookLoginButton />
+      </div>
+    </React.Fragment>
   );
 };
 

@@ -5,13 +5,18 @@
 
 import { Form, Link } from 'react-router';
 import { Text } from '~/components/ui/text';
-import { Wizard } from '~/components/ui/wizard';
+import { Wizard, type WizardStageConfig } from '~/components/ui/wizard';
 import { AuthLayout } from '../components/auth-layout';
 import { SocialButtons } from '../components/social-buttons';
 import type { Route } from './+types/join';
-import { WizardStages } from './ts/constants';
+import { JoinFormContent } from './join-form-content';
+import { ACCOUNT_CONFIG, ADDRESS_CONFIG } from './ts/constants';
 import type { ActionData, SignupFormData } from './ts/types';
-import { WizardFormContent } from './WizardFormContent';
+
+/**
+ * Wizard step configurations with validation rules.
+ */
+const WizardStages: WizardStageConfig[] = [ACCOUNT_CONFIG, ADDRESS_CONFIG];
 
 /**
  * Server action to handle signup form submission.
@@ -42,18 +47,9 @@ export default function JoinPage() {
     <AuthLayout title='Create your account' subtitle='Join us to book your cleaning services'>
       <Form method='post'>
         <Wizard stages={WizardStages}>
-          <WizardFormContent />
+          <JoinFormContent />
         </Wizard>
       </Form>
-
-      <div className='relative my-6'>
-        <div className='absolute inset-0 flex items-center'>
-          <div className='w-full border-t border-slate-200' />
-        </div>
-        <div className='relative flex justify-center text-sm'>
-          <span className='bg-white px-4 text-slate-500'>Or continue with</span>
-        </div>
-      </div>
 
       <SocialButtons />
 
