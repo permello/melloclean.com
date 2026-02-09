@@ -16,7 +16,7 @@ import type { ActionData, SignupFormData } from './ts/types';
 /**
  * Wizard step configurations with validation rules.
  */
-const WizardStages: WizardStageConfig[] = [ACCOUNT_CONFIG, ADDRESS_CONFIG];
+const signUpStages: WizardStageConfig[] = [ACCOUNT_CONFIG, ADDRESS_CONFIG];
 
 /**
  * Server action to handle signup form submission.
@@ -46,7 +46,7 @@ export default function JoinPage() {
   return (
     <AuthLayout title='Create your account' subtitle='Join us to book your cleaning services'>
       <Form method='post'>
-        <Wizard stages={WizardStages}>
+        <Wizard stages={signUpStages}>
           <JoinFormContent />
         </Wizard>
       </Form>
