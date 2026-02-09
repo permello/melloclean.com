@@ -36,20 +36,70 @@ npm copyright      # Add copyright statement to top of all files
 | Background     | Neutral   | `slate-50`, `gray-50`, `white` | #f8fafc, #f9fafb, #ffffff |
 | Destructive    | Red       | `red-500`, `red-600`           | #ef4444, #dc2626          |
 
-## Directory Structure
+## Pages Directory Structure
 
 ```
-frontend/
-├── components/     # Reusable UI components
-│   └── ui/         # Base components (button, heading, text)
-├── core/           # Shared utilities and configuration
-│   ├── config/     # App configuration (company info)
-│   └── util/       # Utilities (cn, mergeRef)
-├── pages/          # Page components and layouts
-│   └── landing/    # Landing page with section layouts
-├── root.tsx        # App root component
-└── routes.ts       # Route definitions
+frontend/pages/
+├── 404/                              # Error pages
+│   └── UserNotRegisteredError.tsx     # Unregistered user error page
+├── auth/                             # Authentication pages
+│   ├── index.tsx                     # Barrel exports (AuthLayout, SocialButtons, PasswordInput)
+│   ├── components/                   # Shared auth components
+│   │   ├── auth-layout.tsx           # Layout wrapper with branding and gradient background
+│   │   ├── divider-with-text.tsx     # Horizontal divider with centered label
+│   │   ├── password-input.tsx        # Password input with optional requirements hint
+│   │   ├── social-buttons.tsx        # Google and Facebook OAuth button group
+│   │   ├── google-login-button.tsx   # Google OAuth button (placeholder)
+│   │   └── facebook-login-button.tsx # Facebook OAuth button (placeholder)
+│   ├── login/                        # Login page
+│   │   └── login.tsx                 # Email/password form with server action
+│   └── join/                         # Signup page (wizard form)
+│       ├── join.tsx                  # Page component with Wizard wrapper
+│       ├── join-form-content.tsx     # Wizard content with stage composition
+│       ├── ts/
+│       │   ├── types.ts             # ActionData, SignupFormData
+│       │   └── constants.ts         # ACCOUNT_CONFIG, ADDRESS_CONFIG
+│       └── components/
+│           ├── index.tsx            # Barrel exports
+│           ├── account-section.tsx  # First/last name, email, password fields
+│           └── address-section.tsx  # Street, city, state, zip code fields
+└── landing/                          # Landing page
+    ├── landing.tsx                   # Root page composing all sections
+    └── layout/
+        ├── index.tsx                # Barrel exports for all layout sections
+        ├── hero/hero.tsx            # Hero banner with CTAs
+        ├── navbar/navbar.tsx        # Responsive navigation bar
+        ├── services/               # Services section
+        │   ├── services.tsx         # Service cards grid
+        │   ├── types.ts             # Color, ServiceOption, ColorClassesOptions
+        │   └── constants.ts         # services array, colorClasses map
+        ├── prices/prices.tsx        # Pricing tiers section
+        ├── testimonials/testimonials.tsx  # Customer reviews section
+        ├── contact/contact.tsx      # Contact info and message form
+        ├── footer/footer.tsx        # Site footer with links and social icons
+        └── booking/                 # Booking wizard (in modal)
+            ├── booking-modal.tsx    # ModalTrigger wrapper with Wizard
+            ├── booking-form-content.tsx  # Wizard content with stage composition
+            ├── ts/
+            │   ├── types.ts         # BookingFormData interface
+            │   └── constants.ts     # Stage configs (GENERAL, HOME, VISIT, SUMMARY)
+            └── components/
+                ├── index.tsx        # Barrel exports
+                ├── general-section.tsx  # Cleaning type and dirtiness fields
+                ├── home-section.tsx     # Bedrooms, bathrooms, sq ft fields
+                ├── visit-section.tsx    # Priority areas, occasion, date fields
+                └── summary-section.tsx  # Review data with recommendation
 ```
+
+### Page Conventions
+
+- **Route pages** export a default component and optionally a `meta` function and `action` server action
+- **Auth pages** wrap content in `AuthLayout` for consistent branding and styling
+- **Landing sections** are standalone components composed in `landing.tsx`
+- **Wizard pages** follow the four-layer pattern: stage configs, page, form content, section components (see [Wizard Form Content Structure](#wizard-form-content-structure) above)
+- **Barrel exports** (`index.tsx`) use `@module` TSDoc tags and re-export named components
+- **Shared auth components** live in `pages/auth/components/` and are re-exported from `pages/auth/index.tsx`
+- **Section-local types** live in `ts/types.ts`; constants and stage configs in `ts/constants.ts`
 
 ## Path Alias
 
@@ -463,6 +513,100 @@ Summary sections display submitted data in a label/value grid:
   <span className='text-slate-500'>Cleaning Type</span>
   <span className='text-slate-900'>{cleaningTypeLabels[formData.cleaningType]}</span>
 </div>
+```
+
+## TSDoc Commenting Conventions
+
+All exported and non-trivial functions, types, interfaces, and React components must have TSDoc comments. Follow these rules:
+
+### General Rules
+
+- Use `/** */` block comments (TSDoc style), never `//` for documentation
+- Place the comment directly above the declaration
+- First line is a concise summary sentence
+- Use `@param` for every function/component parameter
+- Use `@returns` to describe the return value
+- Use `@module` on barrel export files (`index.tsx`)
+
+### React Components
+
+```tsx
+/**
+ * Brief description of what this component renders.
+ * Optional second line with more context.
+ *
+ * @param props - Component props
+ * @param props.formData - Current wizard form values
+ * @param props.setField - Callback to update a single form field
+ * @param props.errors - Validation errors keyed by field name
+ * @returns Description of rendered output
+ */
+export function MyComponent({ formData, setField, errors }: MyComponentProps) {
+```
+
+### Interfaces and Types
+
+```tsx
+/**
+ * Props for the {@link MyComponent} component.
+ */
+interface MyComponentProps {
+  /** Current wizard form values */
+  formData: Record<string, string>;
+  /** Callback to update a single form field by key */
+  setField: (key: string, value: string) => void;
+  /** Validation errors keyed by field name */
+  errors: ValidationErrors;
+}
+```
+
+- Use `{@link ComponentName}` in interface docs to reference the consuming component
+- Every interface/type member gets a `/** */` single-line doc comment
+
+### Functions and Callbacks
+
+```tsx
+/**
+ * Generates a cleaning recommendation based on dirtiness and last cleaning date.
+ *
+ * @param dirtiness - Dirtiness level as a numeric string (1-10)
+ * @param lastCleaned - Key indicating when the home was last professionally cleaned
+ * @returns A recommendation string describing the suggested cleaning type
+ */
+function getRecommendation(dirtiness: string, lastCleaned: string): string {
+```
+
+### Constants
+
+```tsx
+/**
+ * General info stage config.
+ * Validates cleaning type and dirtiness level.
+ */
+export const GENERAL_CONFIG: WizardStageConfig = { ... };
+```
+
+### Barrel Export Files
+
+```tsx
+/**
+ * Public API exports for booking wizard section components.
+ * @module pages/landing/layout/booking/components
+ */
+export { GeneralSection } from './general-section';
+```
+
+### Server Actions (React Router)
+
+```tsx
+/**
+ * Server action to handle login form submission.
+ * Validates email and password fields.
+ *
+ * @param args - Route action arguments
+ * @returns Action response with errors or success status
+ */
+export async function action({ request }: Route.ActionArgs): Promise<ActionData> {
 ```
 
 ## Additional Documentation

@@ -11,6 +11,10 @@ import { validators } from '~/core/util/validation';
  */
 export const BOOKING_STORAGE_KEY = 'melloclean_booking';
 
+/**
+ * General info stage config.
+ * Validates cleaning type and dirtiness level.
+ */
 export const GENERAL_CONFIG: WizardStageConfig = {
   id: 'general',
   name: 'General Info',
@@ -20,6 +24,10 @@ export const GENERAL_CONFIG: WizardStageConfig = {
   },
 };
 
+/**
+ * Home details stage config.
+ * Validates bedrooms, bathrooms, square footage, and last cleaned date.
+ */
 export const HOME_CONFIG: WizardStageConfig = {
   id: 'home',
   name: 'Home Details',
@@ -34,6 +42,10 @@ export const HOME_CONFIG: WizardStageConfig = {
   },
 };
 
+/**
+ * Visit preferences stage config.
+ * Validates preferred date and conditional special occasion description.
+ */
 export const VISIT_CONFIG: WizardStageConfig = {
   id: 'visit',
   name: 'Your Visit',
@@ -48,6 +60,10 @@ export const VISIT_CONFIG: WizardStageConfig = {
   },
 };
 
+/**
+ * Summary stage config.
+ * Display-only stage with no validation rules.
+ */
 export const SUMMARY_CONFIG: WizardStageConfig = {
   id: 'summary',
   name: 'Summary',

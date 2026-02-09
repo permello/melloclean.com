@@ -5,14 +5,30 @@
 import { Input } from '~/components/ui/input';
 import { PasswordInput } from '../../components/password-input';
 
+/**
+ * Props for the {@link AccountSection} component.
+ */
 interface AccountSectionProps {
+  /** Current wizard form values */
   formData: Record<string, string>;
+  /** Callback to update a single form field by name */
   handleChange: (name: string, value: string) => void;
+  /** Merged client and server validation errors keyed by field name */
   combinedErrors: {
     [x: string]: string;
   };
 }
 
+/**
+ * Account creation wizard stage — user identity fields.
+ * Renders first name, last name, email, password, and confirm password inputs.
+ *
+ * @param props - Component props
+ * @param props.formData - Current wizard form values
+ * @param props.handleChange - Callback to update a single form field
+ * @param props.combinedErrors - Merged client and server validation errors
+ * @returns Account info form fields
+ */
 export function AccountSection({ formData, handleChange, combinedErrors }: AccountSectionProps) {
   return (
     <div className='space-y-4'>

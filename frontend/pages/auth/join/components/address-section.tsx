@@ -4,14 +4,30 @@
  */
 import { Input } from '~/components/ui/input';
 
+/**
+ * Props for the {@link AddressSection} component.
+ */
 interface AddressSectionProps {
+  /** Current wizard form values */
   formData: Record<string, string>;
+  /** Callback to update a single form field by name */
   handleChange: (name: string, value: string) => void;
+  /** Merged client and server validation errors keyed by field name */
   combinedErrors: {
     [x: string]: string;
   };
 }
 
+/**
+ * Service address wizard stage — location fields.
+ * Renders street address, city, state, and zip code inputs.
+ *
+ * @param props - Component props
+ * @param props.formData - Current wizard form values
+ * @param props.handleChange - Callback to update a single form field
+ * @param props.combinedErrors - Merged client and server validation errors
+ * @returns Address form fields
+ */
 export function AddressSection({ formData, handleChange, combinedErrors }: AddressSectionProps) {
   return (
     <div className='space-y-4'>

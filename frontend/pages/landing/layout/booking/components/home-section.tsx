@@ -44,12 +44,28 @@ const lastCleanedOptions: SelectOption[] = [
   { key: '1+year', label: '1+ year' },
 ];
 
+/**
+ * Props for the {@link HomeSection} component.
+ */
 interface HomeSectionProps {
+  /** Current wizard form values */
   formData: Record<string, string>;
+  /** Callback to update a single form field by key */
   setField: (key: string, value: string) => void;
+  /** Validation errors keyed by field name */
   errors: ValidationErrors;
 }
 
+/**
+ * Second booking stage — home details.
+ * Renders selects for bedrooms, bathrooms, and last cleaned, plus a square footage input.
+ *
+ * @param props - Component props
+ * @param props.formData - Current wizard form values
+ * @param props.setField - Callback to update a single form field
+ * @param props.errors - Validation errors keyed by field name
+ * @returns Home details form fields
+ */
 export function HomeSection({ formData, setField, errors }: HomeSectionProps) {
   return (
     <div className='space-y-6'>

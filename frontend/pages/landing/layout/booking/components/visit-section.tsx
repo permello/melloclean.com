@@ -7,10 +7,17 @@ import { Input } from '~/components/ui/input';
 import { ToggleButtonGroup, type ToggleOption } from '~/components/ui/toggle-button-group';
 import type { ValidationErrors } from '~/core/util/validation';
 
+/**
+ * Props for the {@link VisitSection} component.
+ */
 interface VisitSectionProps {
+  /** Currently selected priority area keys */
   priorityKeys: string[];
+  /** Callback to update a single form field by key */
   setField: (key: string, value: string) => void;
+  /** Validation errors keyed by field name */
   errors: ValidationErrors;
+  /** Current wizard form values */
   formData: Record<string, string>;
 }
 /**
@@ -37,6 +44,18 @@ const occasionOptions: ToggleOption[] = [
   { key: 'no', label: 'No' },
 ];
 
+/**
+ * Third booking stage — visit preferences.
+ * Renders priority areas toggle, special occasion toggle with conditional input,
+ * and a preferred date picker.
+ *
+ * @param props - Component props
+ * @param props.priorityKeys - Currently selected priority area keys
+ * @param props.setField - Callback to update a single form field
+ * @param props.errors - Validation errors keyed by field name
+ * @param props.formData - Current wizard form values
+ * @returns Visit details form fields
+ */
 export function VisitSection({ priorityKeys, setField, errors, formData }: VisitSectionProps) {
   return (
     <div className='space-y-6'>
