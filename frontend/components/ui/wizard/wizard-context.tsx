@@ -3,9 +3,9 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { WizardContextValue, WizardStageConfig } from './ts/types';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import { validateForm, type ValidationErrors } from '~/core/util/validation';
+import type { WizardContextValue, WizardStageConfig } from './ts/types';
 
 /**
  * React context for wizard state and actions.
@@ -44,6 +44,7 @@ interface WizardProviderProps {
  */
 export function WizardProvider({ stages, children }: WizardProviderProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [maxCompletedStep, setMaxCompletedStep] = useState(-1);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -58,7 +59,6 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
   /** Validates the current stage and advances to the next if valid. Returns true on success. */
   const nextStage = useCallback((): boolean => {
     const currentStepConfig = stages[currentStep];
-    console.log('Validating stage:');
     if (currentStepConfig.validate === undefined) {
       return false;
     }
@@ -70,6 +70,7 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
     }
 
     setErrors({});
+    setMaxCompletedStep((prev) => Math.max(prev, currentStep));
 
     if (!isLastStage) {
       setCurrentStep((prev) => prev + 1);
@@ -89,16 +90,17 @@ export function WizardProvider({ stages, children }: WizardProviderProps) {
   /** Navigates directly to a previously completed stage by index. Clears validation errors. */
   const goToStage = useCallback(
     (index: number) => {
-      if (index >= 0 && index < currentStep) {
+      if (index >= 0 && index <= maxCompletedStep && index !== currentStep) {
         setErrors({});
         setCurrentStep(index);
       }
     },
-    [currentStep],
+    [currentStep, maxCompletedStep],
   );
 
   const value: WizardContextValue = {
     currentStep,
+    maxCompletedStep,
     stages,
     errors,
     formData,

@@ -76,6 +76,8 @@ export interface WizardNavigationProps {
 export interface WizardContextValue {
   /** Current step index (0-based) */
   currentStep: number;
+  /** Highest step index that has been validated (0-based). -1 means none completed. */
+  maxCompletedStep: number;
   /** Array of stage configurations */
   stages: WizardStageConfig[];
   /** Current validation errors */
@@ -92,7 +94,7 @@ export interface WizardContextValue {
   prevStage: () => void;
   /**
    * Navigates directly to a previously completed stage.
-   * Only allows navigation to stages before the current step.
+   * Only allows navigation to previously completed stages.
    *
    * @param index - The 0-based index of the target stage
    */

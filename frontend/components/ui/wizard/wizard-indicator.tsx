@@ -41,7 +41,7 @@ const getVisibleRange = (total: number, current: number, max: number) => {
  * @returns Stage indicator component
  */
 export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndicatorProps) {
-  const { stages, currentStep, goToStage } = useWizard();
+  const { stages, currentStep, goToStage, maxCompletedStep } = useWizard();
 
   const { start, end } = getVisibleRange(stages.length, currentStep, maxVisibleStages);
   const visibleStages = stages.slice(start, end);
@@ -53,8 +53,8 @@ export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndic
    * @returns 'completed', 'active', or 'pending'
    */
   const getStageStatus = (index: number) => {
-    if (index < currentStep) return 'completed';
     if (index === currentStep) return 'active';
+    if (index <= maxCompletedStep) return 'completed';
     return 'pending';
   };
 
@@ -118,7 +118,10 @@ export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndic
                 <div
                   className={cn(
                     connectorVariants({
-                      status: actualIndex < currentStep ? 'completed' : 'pending',
+                      status:
+                        actualIndex < maxCompletedStep || actualIndex < currentStep
+                          ? 'completed'
+                          : 'pending',
                     }),
                     'self-center',
                   )}
