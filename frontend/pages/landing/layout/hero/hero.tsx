@@ -5,6 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
@@ -77,14 +78,15 @@ export function Hero() {
                 showCloseButton
                 className='shadow-lg shadow-emerald-200 data-[hovered=true]:shadow-xl data-[hovered=true]:shadow-emerald-300'
               />
-
-              <Button
-                variant='secondary'
-                aria-label='View all services'
-                className='border-2 border-slate-200 data-[hovered=true]:border-emerald-300 data-[hovered=true]:bg-emerald-50'
-              >
-                View Services
-              </Button>
+              <Link to={{ hash: '#services' }}>
+                <Button
+                  variant='secondary'
+                  aria-label='View all services'
+                  className='border-2 border-slate-200 data-[hovered=true]:border-emerald-300 data-[hovered=true]:bg-emerald-50'
+                >
+                  View Services
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
