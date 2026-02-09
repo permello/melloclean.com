@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
 import { companyConfig } from '~/core/config';
+import { BookingModal } from '../booking/booking-modal';
 
 /**
  * Navigation bar with responsive mobile menu.
@@ -65,16 +66,17 @@ export function Navbar() {
 
             <div className='hidden items-center gap-4 md:flex'>
               <Link to={'/login'}>
-                <button
-                  aria-label='Customer login'
-                  className='text-slate-600 hover:text-emerald-600'
-                >
+                <Button aria-label='Customer login' size='small' variant='secondary'>
                   Customer Login
-                </button>
+                </Button>
               </Link>
-              <Button size='small' aria-label='Book a cleaning'>
-                Book Now
-              </Button>
+              <BookingModal
+                label='Book now'
+                size='small'
+                aria-label='Book a cleaning'
+                title='Book a Cleaning'
+                showCloseButton
+              />
             </div>
 
             {/* Mobile Menu Button */}
@@ -110,24 +112,26 @@ export function Navbar() {
                     {link.label}
                   </a>
                 ))}
+
                 <hr className='my-4' />
-                <Button
+                <BookingModal
+                  label='Book Now'
                   size='large'
-                  onPress={() => {
-                    setMobileOpen(false);
-                  }}
                   className='w-full'
                   aria-label='Book a cleaning'
-                >
-                  Book Now
-                </Button>
+                  title='Book a Cleaning'
+                  showCloseButton
+                />
+
                 <Link to='/login' onClick={() => setMobileOpen(false)}>
-                  <button
+                  <Button
                     aria-label='Customer login'
-                    className='w-full rounded-full bg-slate-100 py-6 text-lg text-slate-900 hover:bg-slate-200'
+                    size='large'
+                    variant='secondary'
+                    className='w-full'
                   >
                     Customer Login
-                  </button>
+                  </Button>
                 </Link>
               </div>
             </div>
