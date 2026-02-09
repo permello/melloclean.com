@@ -5,14 +5,15 @@
 
 import type { Route } from './+types/landing';
 
-import { Navbar, Hero, Services, Pricing, Testimonials, Contact, Footer } from './layout';
 import { companyConfig } from '~/core/config';
+import { Contact, Footer, Hero, Navbar, Pricing, Services, Testimonials } from './layout';
 
 /**
  * Meta function for the landing page.
  * Sets the page title and description.
  *
- * @returns Meta tags array
+ * @param _args - Route meta arguments (unused)
+ * @returns Meta tags array with title and description
  */
 export function meta({}: Route.MetaArgs) {
   return [

@@ -17,16 +17,17 @@ export const circleBaseClasses = [
   'font-semibold',
   'transition-all',
   'duration-300',
+  'select-none',
 ];
 
 /** Tailwind classes for active step circle. */
-export const circleActiveClasses = ['bg-emerald-600', 'text-white'];
+export const circleActiveClasses = ['bg-emerald-600', 'text-white', 'cursor-default'];
 
 /** Tailwind classes for completed step circle. */
-export const circleCompletedClasses = ['bg-emerald-600', 'text-white'];
+export const circleCompletedClasses = ['bg-emerald-600', 'text-white', 'cursor-pointer'];
 
 /** Tailwind classes for pending step circle. */
-export const circlePendingClasses = ['bg-slate-200', 'text-slate-500'];
+export const circlePendingClasses = ['bg-slate-200', 'text-slate-500', 'cursor-not-allowed'];
 
 /**
  * Base Tailwind classes for step indicator labels.
@@ -39,16 +40,17 @@ export const labelBaseClasses = [
   'max-w-20',
   'text-center',
   'line-clamp-2',
+  'select-none',
 ];
 
 /** Tailwind classes for active step label. */
-export const labelActiveClasses = ['text-emerald-600', 'font-semibold'];
+export const labelActiveClasses = ['text-emerald-600', 'font-semibold', 'cursor-default'];
 
 /** Tailwind classes for completed step label. */
-export const labelCompletedClasses = ['text-emerald-600'];
+export const labelCompletedClasses = ['text-emerald-600', 'cursor-pointer'];
 
 /** Tailwind classes for pending step label. */
-export const labelPendingClasses = ['text-slate-400'];
+export const labelPendingClasses = ['text-slate-400', 'cursor-not-allowed'];
 
 /**
  * Base Tailwind classes for connector lines between steps.

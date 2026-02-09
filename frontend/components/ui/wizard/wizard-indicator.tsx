@@ -32,52 +32,62 @@ const getVisibleRange = (total: number, current: number, max: number) => {
 };
 
 /**
- * Visual step indicator showing progress through the wizard.
+ * Visual stage indicator showing progress through the wizard.
  * Displays numbered circles with labels and connecting lines.
- * Supports pagination for wizards with many steps.
+ * Supports pagination for wizards with many stages.
  *
  * @param props - Component props
- * @param props.maxVisibleSteps - Maximum steps shown at once
- * @returns Step indicator component
+ * @param props.maxVisibleStages - Maximum stages shown at once
+ * @returns Stage indicator component
  */
-export function WizardIndicator({ className, maxVisibleSteps = 3 }: WizardIndicatorProps) {
-  const { steps, currentStep } = useWizard();
+export function WizardIndicator({ className, maxVisibleStages = 3 }: WizardIndicatorProps) {
+  const { stages, currentStep, goToStage, maxCompletedStep } = useWizard();
 
-  const { start, end } = getVisibleRange(steps.length, currentStep, maxVisibleSteps);
-  const visibleSteps = steps.slice(start, end);
+  const { start, end } = getVisibleRange(stages.length, currentStep, maxVisibleStages);
+  const visibleStages = stages.slice(start, end);
 
-  const getStepStatus = (index: number) => {
-    if (index < currentStep) return 'completed';
+  /**
+   * Determines the visual status of a stage by its index.
+   *
+   * @param index - The absolute stage index
+   * @returns 'completed', 'active', or 'pending'
+   */
+  const getStageStatus = (index: number) => {
     if (index === currentStep) return 'active';
+    if (index <= maxCompletedStep) return 'completed';
     return 'pending';
   };
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('hidden md:block', className)}>
       {start > 0 && (
         <div className='pointer-events-none absolute top-0 left-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent' />
       )}
-      {end < steps.length && (
+      {end < stages.length && (
         <div className='pointer-events-none absolute top-0 right-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent' />
       )}
       <div className='flex items-stretch justify-center gap-1'>
-        {visibleSteps.map((step, visibleIndex) => {
+        {visibleStages.map((stage, visibleIndex) => {
           const actualIndex = start + visibleIndex;
-          const status = getStepStatus(actualIndex);
+          const status = getStageStatus(actualIndex);
           const isCompleted = status === 'completed';
 
           return (
-            <div key={step.id} className='flex items-stretch'>
-              <div className='flex flex-col items-center'>
-                <motion.div
-                  className={cn(circleVariants({ status }))}
-                  initial={false}
-                  animate={{
-                    scale: status === 'active' ? 1.05 : 1,
-                  }}
-                  transition={{ duration: 0.2 }}
+            <div key={stage.id} className='flex items-stretch'>
+              {isCompleted ? (
+                <button
+                  type='button'
+                  onClick={() => goToStage(actualIndex)}
+                  aria-label={`Go back to step ${actualIndex + 1}: ${stage.name}`}
+                  className='flex cursor-pointer flex-col items-center border-none bg-transparent p-0 focus-visible:rounded-full focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none'
                 >
-                  {isCompleted ? (
+                  <motion.div
+                    className={cn(circleVariants({ status }))}
+                    initial={false}
+                    animate={{ scale: 1 }}
+                    whileHover={{ scale: 1.15 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -85,18 +95,33 @@ export function WizardIndicator({ className, maxVisibleSteps = 3 }: WizardIndica
                     >
                       <Check className='h-4 w-4' />
                     </motion.div>
-                  ) : (
-                    actualIndex + 1
-                  )}
-                </motion.div>
-                <span className={cn(labelVariants({ status }))}>{step.name}</span>
-              </div>
+                  </motion.div>
+                  <span className={cn(labelVariants({ status }))}>{stage.name}</span>
+                </button>
+              ) : (
+                <div className='flex flex-col items-center'>
+                  <motion.div
+                    className={cn(circleVariants({ status }))}
+                    initial={false}
+                    animate={{
+                      scale: status === 'active' ? 1.05 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {actualIndex + 1}
+                  </motion.div>
+                  <span className={cn(labelVariants({ status }))}>{stage.name}</span>
+                </div>
+              )}
 
-              {visibleIndex < visibleSteps.length - 1 && (
+              {visibleIndex < visibleStages.length - 1 && (
                 <div
                   className={cn(
                     connectorVariants({
-                      status: actualIndex < currentStep ? 'completed' : 'pending',
+                      status:
+                        actualIndex < maxCompletedStep || actualIndex < currentStep
+                          ? 'completed'
+                          : 'pending',
                     }),
                     'self-center',
                   )}

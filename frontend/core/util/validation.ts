@@ -24,10 +24,18 @@ export const validators = {
     !/^\d{5}$/.test(value) ? 'Zip code must be 5 digits' : null,
 
   /** Validates that password confirmation matches */
-  confirmPassword: (value: string, password: string): string | null =>
-    value !== password ? 'Passwords do not match' : null,
+  confirmPassword: (value: string, data: Record<string, string>): string | null =>
+    value !== data.password ? 'Passwords do not match' : null,
+
+  /** Validates that a numeric string meets a minimum value */
+  minNumber: (value: string, min: number, message?: string): string | null =>
+    isNaN(Number(value)) || Number(value) < min ? message || `Must be at least ${min}` : null,
 };
 
+export type ValidatorFn<T extends Record<string, string> = Record<string, string>> = (
+  value: string,
+  data: T,
+) => string | null;
 /**
  * Record of field names to error messages.
  */
@@ -42,14 +50,15 @@ export type ValidationErrors = Record<string, string>;
  */
 export function validateForm<T extends Record<string, string>>(
   data: T,
-  rules: Record<keyof T, ((value: string) => string | null)[]>,
+  rules: Record<keyof T, ValidatorFn[]>,
 ): ValidationErrors {
   const errors: ValidationErrors = {};
 
-  for (const [field, fieldRules] of Object.entries(rules)) {
-    const value = data[field as keyof T] || '';
-    for (const rule of fieldRules as ((value: string) => string | null)[]) {
-      const error = rule(value);
+  for (const field in rules) {
+    const value = data[field] ?? '';
+
+    for (const rule of rules[field]) {
+      const error = rule(value, data);
       if (error) {
         errors[field] = error;
         break;

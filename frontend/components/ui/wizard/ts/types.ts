@@ -4,27 +4,27 @@
  */
 
 import type { ReactNode } from 'react';
-import type { ValidationErrors } from '~/core/util/validation';
+import type { ValidationErrors, ValidatorFn } from '~/core/util/validation';
 
 /**
- * Configuration for a single wizard step.
+ * Configuration for a single wizard stage.
  */
-export interface WizardStepConfig {
-  /** Unique identifier for the step */
+export interface WizardStageConfig {
+  /** Unique identifier for the stage */
   id: string;
   /** Display name shown in the indicator */
   name: string;
-  /** Optional validation function for the step */
-  validate?: (formData: Record<string, string>) => ValidationErrors;
+  /** Optional validation function for the stage */
+  validate?: Record<string, ValidatorFn[]>;
 }
 
 /**
  * Props for the main Wizard component.
  */
 export interface WizardProps {
-  /** Array of step configurations */
-  steps: WizardStepConfig[];
-  /** Step content as children */
+  /** Array of stage configurations */
+  stages: WizardStageConfig[];
+  /** Stage content as children */
   children: ReactNode;
   /** Callback when wizard completes */
   onComplete?: (formData: Record<string, string>) => void;
@@ -33,12 +33,12 @@ export interface WizardProps {
 }
 
 /**
- * Props for individual WizardStep components.
+ * Props for individual WizardStage components.
  */
-export interface WizardStepProps {
-  /** Must match a step id from the wizard configuration */
+export interface WizardStageProps {
+  /** Must match a stage id from the wizard configuration */
   id: string;
-  /** Step content */
+  /** Stage content */
   children: ReactNode;
   /** Additional CSS classes */
   className?: string;
@@ -50,8 +50,8 @@ export interface WizardStepProps {
 export interface WizardIndicatorProps {
   /** Additional CSS classes */
   className?: string;
-  /** Maximum number of visible steps before scrolling */
-  maxVisibleSteps?: number;
+  /** Maximum number of visible stages before scrolling */
+  maxVisibleStages?: number;
 }
 
 /**
@@ -76,20 +76,29 @@ export interface WizardNavigationProps {
 export interface WizardContextValue {
   /** Current step index (0-based) */
   currentStep: number;
-  /** Array of step configurations */
-  steps: WizardStepConfig[];
+  /** Highest step index that has been validated (0-based). -1 means none completed. */
+  maxCompletedStep: number;
+  /** Array of stage configurations */
+  stages: WizardStageConfig[];
   /** Current validation errors */
   errors: ValidationErrors;
   /** Collected form data */
   formData: Record<string, string>;
-  /** Whether on the first step */
-  isFirstStep: boolean;
-  /** Whether on the last step */
-  isLastStep: boolean;
-  /** Advance to next step, returns success status */
-  nextStep: () => boolean;
-  /** Go back to previous step */
-  prevStep: () => void;
+  /** Whether on the first stage */
+  isFirstStage: boolean;
+  /** Whether on the last stage */
+  isLastStage: boolean;
+  /** Advance to next stage, returns success status */
+  nextStage: () => boolean;
+  /** Go back to previous stage */
+  prevStage: () => void;
+  /**
+   * Navigates directly to a previously completed stage.
+   * Only allows navigation to previously completed stages.
+   *
+   * @param index - The 0-based index of the target stage
+   */
+  goToStage: (index: number) => void;
   /** Update form data */
   updateFormData: (data: Record<string, string>) => void;
   /** Set validation errors */

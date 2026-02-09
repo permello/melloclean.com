@@ -19,6 +19,7 @@ export const baseClasses = [
   'rounded-full',
   'outline-none',
   'font-semibold',
+  'select-none',
 ];
 /**
  * Tailwind classes for the primary button variant.

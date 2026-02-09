@@ -57,6 +57,7 @@ const Toast: React.FC<ToastProps> = ({ toast, state }) => {
       </p>
       <button
         {...closeButtonProps}
+        aria-label='Close notification'
         onClick={() => state.close(toast.key)}
         className='flex-shrink-0 rounded-full p-1 transition-colors hover:bg-black/10'
       >

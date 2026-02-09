@@ -3,13 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { companyConfig } from '~/core/config/config';
+import React from 'react';
 import { Link } from 'react-router';
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
+import { companyConfig } from '~/core/config/';
 
 /**
  * Props for the AuthLayout component.
@@ -32,7 +32,7 @@ interface AuthLayoutProps {
  */
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) => {
   return (
-    <div className='relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-white p-4'>
+    <div className='relative flex min-h-screen items-center justify-center overflow-hidden overscroll-none bg-gradient-to-br from-emerald-50 via-teal-50 to-white p-4 md:overscroll-auto'>
       {/* Blurred decorative circles */}
       <div className='absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-200/30 blur-3xl' />
       <div className='absolute top-1/4 -right-24 h-80 w-80 rounded-full bg-teal-200/30 blur-3xl' />
@@ -41,15 +41,17 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className='w-full max-w-md'
+        className='z-10 max-h-[calc(100vh-1rem)] w-full max-w-md overflow-y-auto md:max-h-none md:overflow-y-visible'
       >
-        <div className='rounded-2xl bg-white p-8 shadow-xl'>
+        <div className='rounded-2xl bg-white p-5 shadow-xl sm:p-8'>
           <div className='mb-8 flex flex-col items-center'>
             <Link to='/' className='mb-4 flex items-center gap-2'>
               <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600'>
                 <Sparkles className='h-5 w-5 text-white' />
               </div>
-              <span className='text-xl font-bold text-slate-900'>{companyConfig.Name}</span>
+              <span className='text-xl font-bold text-slate-900 select-none'>
+                {companyConfig.Name}
+              </span>
             </Link>
             <Heading level={4}>{title}</Heading>
             {subtitle && <Text className='mt-1 text-center'>{subtitle}</Text>}

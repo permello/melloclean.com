@@ -21,6 +21,7 @@ export const baseClasses = [
   'disabled:cursor-not-allowed',
   'disabled:bg-slate-50',
   'disabled:text-slate-500',
+  'select-none',
 ];
 
 /**

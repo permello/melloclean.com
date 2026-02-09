@@ -7,10 +7,11 @@
  * Public API exports for landing page layout components.
  * @module pages/landing/layout
  */
-export { Navbar } from './navbar/navbar';
-export { Hero } from './hero/hero';
-export { Footer } from './footer/footer';
+export { BookingModal } from './booking/booking-modal';
 export { Contact } from './contact/contact';
+export { Footer } from './footer/footer';
+export { Hero } from './hero/hero';
+export { Navbar } from './navbar/navbar';
 export { Pricing } from './prices/prices';
 export { Services } from './services/services';
 export { Testimonials } from './testimonials/testimonials';

@@ -4,14 +4,14 @@
  */
 
 import { Form, Link, useActionData, useNavigation } from 'react-router';
-import type { Route } from './+types/login';
-import { AuthLayout } from '../components/auth-layout';
-import { SocialButtons } from '../components/social-buttons';
-import { PasswordInput } from '../components/password-input';
-import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import { Text } from '~/components/ui/text';
-import { validators, validateForm, type ValidationErrors } from '~/core/util/validation';
+import { validateForm, validators, type ValidationErrors } from '~/core/util/validation';
+import { AuthLayout } from '../components/auth-layout';
+import { PasswordInput } from '../components/password-input';
+import { SocialButtons } from '../components/social-buttons';
+import type { Route } from './+types/login';
 
 /**
  * Response data from the login action.
@@ -66,6 +66,7 @@ export default function LoginPage() {
         <Input
           name='email'
           label='Email'
+          aria-label='Email address'
           type='email'
           placeholder='you@example.com'
           autoComplete='email'
@@ -75,24 +76,22 @@ export default function LoginPage() {
         <PasswordInput
           name='password'
           label='Password'
+          aria-label='Password'
           placeholder='Enter your password'
           autoComplete='current-password'
           error={actionData?.errors?.password}
         />
 
-        <Button type='submit' disabled={isSubmitting} isLoading={isSubmitting} className='w-full'>
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          isLoading={isSubmitting}
+          className='w-full'
+          aria-label='Sign in'
+        >
           Sign In
         </Button>
       </Form>
-
-      <div className='relative my-6'>
-        <div className='absolute inset-0 flex items-center'>
-          <div className='w-full border-t border-slate-200' />
-        </div>
-        <div className='relative flex justify-center text-sm'>
-          <span className='bg-white px-4 text-slate-500'>Or continue with</span>
-        </div>
-      </div>
 
       <SocialButtons />
 

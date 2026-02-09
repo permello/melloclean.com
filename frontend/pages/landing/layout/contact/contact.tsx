@@ -78,6 +78,7 @@ export function Contact() {
                 <div>
                   <label className='mb-2 block text-sm font-medium text-slate-700'>Name</label>
                   <input
+                    aria-label='Your name'
                     placeholder='Your name'
                     className='block h-12 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-xs focus:border-2 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none'
                   />
@@ -85,6 +86,7 @@ export function Contact() {
                 <div>
                   <label className='mb-2 block text-sm font-medium text-slate-700'>Email</label>
                   <input
+                    aria-label='Your email'
                     type='email'
                     placeholder='your@email.com'
                     className='block h-12 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-xs focus:border-2 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none'
@@ -95,6 +97,7 @@ export function Contact() {
               <div>
                 <label className='mb-2 block text-sm font-medium text-slate-700'>Phone</label>
                 <input
+                  aria-label='Your phone number'
                   type='tel'
                   placeholder='(555) 000-0000'
                   className='"block h-12 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-xs focus:border-2 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none'
@@ -104,13 +107,14 @@ export function Contact() {
               <div>
                 <label className='mb-2 block text-sm font-medium text-slate-700'>Message</label>
                 <textarea
+                  aria-label='Your message'
                   placeholder='Tell us about your cleaning needs...'
                   rows={4}
                   className='block w-full resize-none rounded-xl border border-slate-200 p-3.5 text-sm shadow-xs focus:border-2 focus:border-emerald-500 focus:ring-emerald-500 focus:outline-none'
                 />
               </div>
 
-              <Button className='w-full rounded-xl font-semibold'>
+              <Button aria-label='Send message' className='w-full rounded-xl font-semibold'>
                 Send Message
                 <ArrowRight className='ml-2 h-5 w-5' />
               </Button>

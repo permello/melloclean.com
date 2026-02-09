@@ -1,0 +1,41 @@
+/**
+ * @copyright 2026 Eduardo Turcios. All rights reserved.
+ * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
+ */
+
+import type { WizardStageConfig } from '~/components/ui/wizard';
+import { validators } from '~/core/util/validation';
+
+/**
+ * Account creation stage config.
+ * Validates first name, last name, email, password, and password confirmation.
+ */
+export const ACCOUNT_CONFIG: WizardStageConfig = {
+  id: 'account',
+  name: 'Account',
+  validate: {
+    firstName: [(v) => validators.required(v, 'First name')],
+    lastName: [(v) => validators.required(v, 'Last name')],
+    email: [(v) => validators.required(v, 'Email'), validators.email],
+    password: [(v) => validators.required(v, 'Password'), (v) => validators.minLength(v, 8)],
+    confirmPassword: [
+      (v) => validators.required(v, 'Confirm password'),
+      validators.confirmPassword,
+    ],
+  },
+};
+
+/**
+ * Service address stage config.
+ * Validates street, city, state, and zip code.
+ */
+export const ADDRESS_CONFIG: WizardStageConfig = {
+  id: 'address',
+  name: 'Service Address',
+  validate: {
+    street: [(v) => validators.required(v, 'Street address')],
+    city: [(v) => validators.required(v, 'City')],
+    state: [(v) => validators.required(v, 'State')],
+    zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
+  },
+};

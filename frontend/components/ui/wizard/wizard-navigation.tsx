@@ -22,17 +22,19 @@ export function WizardNavigation({
   completeLabel = 'Complete',
   className,
 }: WizardNavigationProps) {
-  const { isFirstStep, isLastStep, nextStep, prevStep } = useWizard();
+  const { isFirstStage, isLastStage, nextStage, prevStage } = useWizard();
 
+  /** Advances to the next stage without submitting the form. */
   const handleNext = (event: React.MouseEvent) => {
     event.preventDefault();
-    if (!isLastStep) {
-      nextStep();
+    if (!isLastStage) {
+      nextStage();
     }
   };
 
+  /** Validates the final stage and allows form submission if valid. */
   const handleSubmit = (event: React.MouseEvent) => {
-    const isValid = nextStep();
+    const isValid = nextStage();
     if (!isValid) {
       event.preventDefault();
     }
@@ -40,25 +42,31 @@ export function WizardNavigation({
 
   return (
     <div
-      className={cn('flex gap-3', isFirstStep ? 'justify-center' : 'justify-between', className)}
+      className={cn('flex gap-3', isFirstStage ? 'justify-center' : 'justify-between', className)}
     >
-      {!isFirstStep && (
-        <Button type='button' variant='secondary' onPress={prevStep}>
+      {!isFirstStage && (
+        <Button
+          type='button'
+          variant='secondary'
+          onPress={prevStage}
+          aria-label='Go to previous step'
+        >
           {backLabel}
         </Button>
       )}
 
-      {isLastStep ? (
+      {isLastStage ? (
         <Button
           type='submit'
           disabled={isSubmitting}
           isLoading={isSubmitting}
           onClick={handleSubmit}
+          aria-label={completeLabel}
         >
           {completeLabel}
         </Button>
       ) : (
-        <Button type='button' onClick={handleNext}>
+        <Button type='button' onClick={handleNext} aria-label='Go to next step'>
           {nextLabel}
         </Button>
       )}

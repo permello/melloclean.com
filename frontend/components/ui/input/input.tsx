@@ -3,13 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import React, { useRef, useState } from 'react';
-import { cn } from '~/core/util/cn';
-import { inputVariants } from './ts/variants';
-import type { InputProps } from './ts/types';
-import { useTextField } from 'react-aria';
-import { mergeRefs } from '~/core/util/mergeRef';
 import { Eye, EyeOff } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { useTextField } from 'react-aria';
+import { cn } from '~/core/util/cn';
+import { mergeRefs } from '~/core/util/mergeRef';
+import type { InputProps } from './ts/types';
+import { inputVariants } from './ts/variants';
 
 /**
  * Accessible input component with label, error, and hint support.
@@ -25,17 +25,32 @@ import { Eye, EyeOff } from 'lucide-react';
  * @returns Rendered input element with optional label and messages
  */
 const Input: React.FC<InputProps> = (props: InputProps) => {
-  const { className, variant, label, error, hint, type, ref, id, ...rest } = props;
+  const {
+    className,
+    variant,
+    label,
+    errorMessage,
+    hint,
+    type,
+    ref,
+    id,
+    validate,
+    validationBehavior,
+    ...rest
+  } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const { labelProps, inputProps, errorMessageProps, descriptionProps } = useTextField(
+  const {
+    labelProps,
+    inputProps,
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+  } = useTextField(
     {
       ...rest,
-      type,
-      label,
-      errorMessage: error,
       description: hint,
-      isInvalid: !!error,
     },
     inputRef,
   );
@@ -45,12 +60,11 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
   const inputClasses = cn(
-    inputVariants({ variant: error ? 'error' : variant }),
-    isPassword && 'pr-12',
+    inputVariants({ variant: errorMessage ? 'error' : variant }),
+    isPassword && 'pr-12 ',
     className,
   );
   const mRef = mergeRefs([ref, inputRef]);
-
   return (
     <div className='flex flex-col gap-1.5'>
       {label && (
@@ -72,14 +86,14 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
           </button>
         )}
       </div>
-      {hint && !error && (
-        <p {...descriptionProps} className='text-sm text-slate-500'>
+      {hint && !isInvalid && (
+        <p {...descriptionProps} className='text-sm text-slate-500 select-none'>
           {hint}
         </p>
       )}
-      {error && (
-        <p {...errorMessageProps} className='text-sm text-red-500'>
-          {error}
+      {isInvalid && (
+        <p {...errorMessageProps} className='text-sm text-red-500 select-none'>
+          {errorMessage as string}
         </p>
       )}
     </div>

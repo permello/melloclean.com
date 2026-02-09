@@ -3,12 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { useState, useEffect } from 'react';
-import { Sparkles, Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Sparkles, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '~/components/ui/button';
 import { companyConfig } from '~/core/config';
+import { BookingModal } from '../booking/booking-modal';
 
 /**
  * Navigation bar with responsive mobile menu.
@@ -65,15 +66,22 @@ export function Navbar() {
 
             <div className='hidden items-center gap-4 md:flex'>
               <Link to={'/login'}>
-                <button className='text-slate-600 hover:text-emerald-600'>Customer Login</button>
+                <Button aria-label='Customer login' size='small' variant='secondary'>
+                  Customer Login
+                </Button>
               </Link>
-              <Link to={''}>
-                <Button size='small'>Book Now</Button>
-              </Link>
+              <BookingModal
+                label='Book now'
+                size='small'
+                aria-label='Book a cleaning'
+                title='Book a Cleaning'
+                showCloseButton
+              />
             </div>
 
             {/* Mobile Menu Button */}
             <button
+              aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
               className='p-2 text-slate-600 md:hidden'
               onClick={() => setMobileOpen(!mobileOpen)}
             >
@@ -104,11 +112,26 @@ export function Navbar() {
                     {link.label}
                   </a>
                 ))}
+
                 <hr className='my-4' />
-                <Link to={''} onClick={() => setMobileOpen(false)}>
-                  <button className='w-full rounded-full bg-emerald-600 py-6 text-lg text-white hover:bg-emerald-700'>
+                <BookingModal
+                  label='Book Now'
+                  size='large'
+                  className='w-full'
+                  aria-label='Book a cleaning'
+                  title='Book a Cleaning'
+                  showCloseButton
+                />
+
+                <Link to='/login' onClick={() => setMobileOpen(false)}>
+                  <Button
+                    aria-label='Customer login'
+                    size='large'
+                    variant='secondary'
+                    className='w-full'
+                  >
                     Customer Login
-                  </button>
+                  </Button>
                 </Link>
               </div>
             </div>

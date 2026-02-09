@@ -8,14 +8,14 @@
  * @module components/ui/wizard
  */
 export { Wizard } from './wizard';
-export { WizardStep } from './wizard-step';
+export { WizardStage } from './wizard-stage';
 export { WizardIndicator } from './wizard-indicator';
 export { WizardNavigation } from './wizard-navigation';
 export { useWizard } from './wizard-context';
 export type {
   WizardProps,
-  WizardStepProps,
-  WizardStepConfig,
+  WizardStageProps,
+  WizardStageConfig,
   WizardIndicatorProps,
   WizardNavigationProps,
   WizardContextValue,

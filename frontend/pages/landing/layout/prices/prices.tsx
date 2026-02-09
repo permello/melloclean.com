@@ -147,6 +147,7 @@ export function Pricing() {
               <Link to={'#pricing'}>
                 <Button
                   variant={plan.popular ? 'secondary' : 'primary'}
+                  aria-label={`Get started with ${plan.name} plan`}
                   className={`w-full rounded-xl py-3 text-lg ${
                     plan.popular && 'text-emerald-600 data-[hovered=true]:bg-emerald-50'
                   }`}
