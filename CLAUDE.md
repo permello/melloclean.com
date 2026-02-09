@@ -116,23 +116,25 @@ All components live in `frontend/components/ui/` and follow the CVA pattern with
 
 Accessible button with multiple variants and sizes. Built with React Aria.
 
-| Prop        | Type                                                       | Default     |
-| ----------- | ---------------------------------------------------------- | ----------- |
+| Prop        | Type                                                             | Default     |
+| ----------- | ---------------------------------------------------------------- | ----------- |
 | `variant`   | `'primary' \| 'secondary' \| 'destructive' \| 'ghost' \| 'link'` | `'primary'` |
-| `size`      | `'small' \| 'default' \| 'large'`                         | `'default'` |
-| `isLoading` | `boolean`                                                  | `false`     |
-| `disabled`  | `boolean`                                                  | `false`     |
+| `size`      | `'small' \| 'default' \| 'large'`                                | `'default'` |
+| `isLoading` | `boolean`                                                        | `false`     |
+| `disabled`  | `boolean`                                                        | `false`     |
 
 ```tsx
-<Button variant="primary" size="large">Click me</Button>
+<Button variant='primary' size='large'>
+  Click me
+</Button>
 ```
 
 ### Heading
 
 Polymorphic heading component. The `level` prop sets both the HTML element (h1-h6) and responsive text size.
 
-| Prop    | Type                        | Default |
-| ------- | --------------------------- | ------- |
+| Prop    | Type                         | Default |
+| ------- | ---------------------------- | ------- |
 | `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `1`     |
 
 ```tsx
@@ -143,9 +145,9 @@ Polymorphic heading component. The `level` prop sets both the HTML element (h1-h
 
 Polymorphic text component with variant styling per element type.
 
-| Prop | Type                                   | Default |
-| ---- | -------------------------------------- | ------- |
-| `as` | `'p' \| 'span' \| 'em' \| 'strong'`   | `'p'`   |
+| Prop | Type                                | Default |
+| ---- | ----------------------------------- | ------- |
+| `as` | `'p' \| 'span' \| 'em' \| 'strong'` | `'p'`   |
 
 - `p` renders slate body text
 - `span` renders emerald-to-teal gradient text
@@ -153,7 +155,7 @@ Polymorphic text component with variant styling per element type.
 - `strong` renders bold slate text
 
 ```tsx
-<Text as="span">Gradient highlighted text</Text>
+<Text as='span'>Gradient highlighted text</Text>
 ```
 
 ### Input
@@ -167,96 +169,100 @@ Accessible input with label, error, hint, and password visibility toggle. Built 
 | `hint`               | `string`                   | —           |
 | `type`               | `string`                   | `'text'`    |
 | `variant`            | `'default' \| 'error'`     | `'default'` |
-| `validate`           | React Aria validator        | —           |
-| `validationBehavior` | React Aria validation mode  | —           |
+| `validate`           | React Aria validator       | —           |
+| `validationBehavior` | React Aria validation mode | —           |
 
 ```tsx
-<Input label="Email" type="email" />
+<Input label='Email' type='email' />
 ```
 
 ### Textarea
 
 Textarea component mirroring Input's label/error/hint pattern.
 
-| Prop           | Type                       | Default     |
-| -------------- | -------------------------- | ----------- |
-| `label`        | `string`                   | —           |
-| `errorMessage` | `string`                   | —           |
-| `hint`         | `string`                   | —           |
-| `rows`         | `number`                   | `4`         |
-| `value`        | `string`                   | —           |
-| `onChange`     | `(value: string) => void`  | —           |
-| `isDisabled`   | `boolean`                  | `false`     |
-| `variant`      | `'default' \| 'error'`     | `'default'` |
+| Prop           | Type                      | Default     |
+| -------------- | ------------------------- | ----------- |
+| `label`        | `string`                  | —           |
+| `errorMessage` | `string`                  | —           |
+| `hint`         | `string`                  | —           |
+| `rows`         | `number`                  | `4`         |
+| `value`        | `string`                  | —           |
+| `onChange`     | `(value: string) => void` | —           |
+| `isDisabled`   | `boolean`                 | `false`     |
+| `variant`      | `'default' \| 'error'`    | `'default'` |
 
 ```tsx
-<Textarea label="Notes" rows={6} value={text} onChange={setText} />
+<Textarea label='Notes' rows={6} value={text} onChange={setText} />
 ```
 
 ### Select
 
 Custom dropdown select with keyboard navigation, Framer Motion animations, and click-outside dismissal.
 
-| Prop                | Type                        | Default             |
-| ------------------- | --------------------------- | ------------------- |
-| `label`             | `string`                    | —                   |
-| `errorMessage`      | `string`                    | —                   |
-| `hint`              | `string`                    | —                   |
-| `placeholder`       | `string`                    | `'Select an option'` |
-| `options`           | `SelectOption[]`            | required            |
-| `selectedKey`       | `string`                    | required            |
-| `onSelectionChange` | `(key: string) => void`     | required            |
-| `variant`           | `'default' \| 'error'`      | `'default'`         |
+| Prop                | Type                    | Default              |
+| ------------------- | ----------------------- | -------------------- |
+| `label`             | `string`                | —                    |
+| `errorMessage`      | `string`                | —                    |
+| `hint`              | `string`                | —                    |
+| `placeholder`       | `string`                | `'Select an option'` |
+| `options`           | `SelectOption[]`        | required             |
+| `selectedKey`       | `string`                | required             |
+| `onSelectionChange` | `(key: string) => void` | required             |
+| `variant`           | `'default' \| 'error'`  | `'default'`          |
 
 `SelectOption`: `{ key: string; label: string }`
 
 ```tsx
-<Select label="Room" options={rooms} selectedKey={room} onSelectionChange={setRoom} />
+<Select label='Room' options={rooms} selectedKey={room} onSelectionChange={setRoom} />
 ```
 
 ### Slider
 
 Range slider with visual track, thumb, and optional value display.
 
-| Prop           | Type                           | Default |
-| -------------- | ------------------------------ | ------- |
-| `label`        | `string`                       | —       |
-| `errorMessage` | `string`                       | —       |
-| `hint`         | `string`                       | —       |
-| `showValue`    | `boolean`                      | `true`  |
-| `formatValue`  | `(value: number) => string`    | —       |
-| `minValue`     | `number`                       | required |
-| `maxValue`     | `number`                       | required |
-| `step`         | `number`                       | required |
-| `value`        | `number`                       | required |
-| `onChange`     | `(value: number) => void`      | required |
+| Prop           | Type                        | Default  |
+| -------------- | --------------------------- | -------- |
+| `label`        | `string`                    | —        |
+| `errorMessage` | `string`                    | —        |
+| `hint`         | `string`                    | —        |
+| `showValue`    | `boolean`                   | `true`   |
+| `formatValue`  | `(value: number) => string` | —        |
+| `minValue`     | `number`                    | required |
+| `maxValue`     | `number`                    | required |
+| `step`         | `number`                    | required |
+| `value`        | `number`                    | required |
+| `onChange`     | `(value: number) => void`   | required |
 
 ```tsx
-<Slider label="Rating" minValue={1} maxValue={10} step={1} value={val} onChange={setVal} />
+<Slider label='Rating' minValue={1} maxValue={10} step={1} value={val} onChange={setVal} />
 ```
 
 ### Modal
 
 Accessible modal dialog with backdrop blur, scroll lock, and focus trap. Built with React Aria `useModalOverlay`.
 
-| Prop          | Type                    | Default     |
-| ------------- | ----------------------- | ----------- |
-| `size`        | `'default' \| 'large'`  | `'default'` |
-| `state`       | `OverlayTriggerState`   | required    |
-| `modalStyles` | `string`                | —           |
-| `children`    | `ReactNode`             | required    |
+| Prop          | Type                   | Default     |
+| ------------- | ---------------------- | ----------- |
+| `size`        | `'default' \| 'large'` | `'default'` |
+| `state`       | `OverlayTriggerState`  | required    |
+| `modalStyles` | `string`               | —           |
+| `children`    | `ReactNode`            | required    |
 
 **ModalTrigger**: Compound component pairing a Button with a Modal.
 
-| Prop       | Type                                      | Default  |
-| ---------- | ----------------------------------------- | -------- |
-| `label`    | `string`                                  | required |
-| `icon`     | `ReactNode`                               | —        |
-| `children` | `(close: () => void) => JSX.Element`      | required |
+| Prop       | Type                                 | Default  |
+| ---------- | ------------------------------------ | -------- |
+| `label`    | `string`                             | required |
+| `icon`     | `ReactNode`                          | —        |
+| `children` | `(close: () => void) => JSX.Element` | required |
 
 ```tsx
-<ModalTrigger label="Open">
-  {(close) => <div><button onClick={close}>Close</button></div>}
+<ModalTrigger label='Open'>
+  {(close) => (
+    <div>
+      <button onClick={close}>Close</button>
+    </div>
+  )}
 </ModalTrigger>
 ```
 
@@ -267,6 +273,7 @@ Toast notification system with provider/context pattern and animated enter/exit.
 **Variants**: `'success' | 'error' | 'warning' | 'info'`
 
 **Setup**:
+
 ```tsx
 <ToastProvider>
   <App />
@@ -274,36 +281,37 @@ Toast notification system with provider/context pattern and animated enter/exit.
 ```
 
 **Usage**:
+
 ```tsx
 const { addToast } = useToast();
 addToast('Saved!', 'success', 5000);
 ```
 
-| Hook/Component   | Purpose                                    |
-| ---------------- | ------------------------------------------ |
-| `ToastProvider`   | Wraps app, manages toast state             |
-| `ToastRegion`     | Renders visible toasts (top-right corner)  |
-| `Toast`           | Individual toast with icon and close button |
-| `useToast()`      | Returns `{ addToast, removeToast }`        |
+| Hook/Component  | Purpose                                     |
+| --------------- | ------------------------------------------- |
+| `ToastProvider` | Wraps app, manages toast state              |
+| `ToastRegion`   | Renders visible toasts (top-right corner)   |
+| `Toast`         | Individual toast with icon and close button |
+| `useToast()`    | Returns `{ addToast, removeToast }`         |
 
 ### ToggleButtonGroup
 
 Multi-select toggle button group with pill-shaped buttons.
 
-| Prop                | Type                           | Default  |
-| ------------------- | ------------------------------ | -------- |
-| `label`             | `string`                       | —        |
-| `errorMessage`      | `string`                       | —        |
-| `hint`              | `string`                       | —        |
-| `options`           | `ToggleOption[]`               | required |
-| `selectedKeys`      | `string[]`                     | required |
-| `onSelectionChange` | `(keys: string[]) => void`     | required |
+| Prop                | Type                       | Default  |
+| ------------------- | -------------------------- | -------- |
+| `label`             | `string`                   | —        |
+| `errorMessage`      | `string`                   | —        |
+| `hint`              | `string`                   | —        |
+| `options`           | `ToggleOption[]`           | required |
+| `selectedKeys`      | `string[]`                 | required |
+| `onSelectionChange` | `(keys: string[]) => void` | required |
 
 `ToggleOption`: `{ key: string; label: string }`
 
 ```tsx
 <ToggleButtonGroup
-  label="Areas"
+  label='Areas'
   options={[{ key: 'kitchen', label: 'Kitchen' }]}
   selectedKeys={selected}
   onSelectionChange={setSelected}
@@ -316,11 +324,11 @@ Multi-step form wizard with validation, progress indicators, and animated transi
 
 **Wizard** (container):
 
-| Prop         | Type                                          | Default  |
-| ------------ | --------------------------------------------- | -------- |
-| `stages`     | `WizardStageConfig[]`                         | required |
-| `children`   | `ReactNode`                                   | required |
-| `onComplete` | `(formData: Record<string, string>) => void`  | —        |
+| Prop         | Type                                         | Default  |
+| ------------ | -------------------------------------------- | -------- |
+| `stages`     | `WizardStageConfig[]`                        | required |
+| `children`   | `ReactNode`                                  | required |
+| `onComplete` | `(formData: Record<string, string>) => void` | —        |
 
 `WizardStageConfig`: `{ id: string; name: string; validate?: Record<string, ValidatorFn[]> }`
 
@@ -350,9 +358,111 @@ Multi-step form wizard with validation, progress indicators, and animated transi
 ```tsx
 <Wizard stages={[{ id: 'info', name: 'Info', validate: { name: [required] } }]}>
   <WizardIndicator />
-  <WizardStage id="info">...</WizardStage>
+  <WizardStage id='info'>...</WizardStage>
   <WizardNavigation />
 </Wizard>
+```
+
+### Wizard Form Content Structure
+
+How to organize the form content inside wizard stages. Both the join page and booking page follow these patterns.
+
+#### File Organization
+
+Each wizard form has four layers:
+
+| Layer              | File                            | Responsibility                                                                                       |
+| ------------------ | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Stage configs      | `ts/constants.ts`               | Individual `WizardStageConfig` exports with validation rules                                         |
+| Page               | `join.tsx`, `booking-modal.tsx` | Assembles configs into a `WizardStageConfig[]` array, wraps `<Wizard>`, handles submission           |
+| Form content       | `*-form-content.tsx`            | Composes `WizardIndicator`, `WizardStage`s, `WizardNavigation`; wires `useWizard()` data to sections |
+| Section components | `components/*-section.tsx`      | Renders fields for a single stage                                                                    |
+
+#### Stage Config Naming Conventions
+
+Stage configs live in the wizard form's `ts/constants.ts` and follow these conventions:
+
+- **Config names**: `SCREAMING_SNAKE_CASE` with a `_CONFIG` suffix — e.g. `ACCOUNT_CONFIG`, `HOME_CONFIG`, `SUMMARY_CONFIG`
+- **`id`**: Short lowercase slug matching the stage concept — e.g. `'account'`, `'home'`, `'summary'`
+- **`name`**: Human-readable label shown in `WizardIndicator` — e.g. `'Account'`, `'Home Details'`, `'Summary'`
+- **Stages array**: Assembled in the page component as `const WizardStages: WizardStageConfig[] = [...]` and passed to `<Wizard stages={WizardStages}>`
+- **Imports in form content**: `*-form-content.tsx` also imports individual configs to reference their `id` in `<WizardStage id={ACCOUNT_CONFIG.id}>`
+
+```ts
+// ts/constants.ts
+export const ACCOUNT_CONFIG: WizardStageConfig = {
+  id: 'account',
+  name: 'Account',
+  validate: {
+    firstName: [(v) => validators.required(v, 'First name')],
+    email: [(v) => validators.required(v, 'Email'), validators.email],
+  },
+};
+```
+
+```ts
+// page component
+const signUpStages: WizardStageConfig[] = [ACCOUNT_CONFIG, ADDRESS_CONFIG];
+<Wizard stages={signUpStages}>...</Wizard>
+```
+
+#### Form Content Composition
+
+The `*-form-content.tsx` always follows this order classNames can be adjusted for margin and padding:
+
+```tsx
+<>
+  <WizardIndicator className='mb-6' />
+  <WizardStage id={STAGE_A.id}>
+    <SectionA formData={formData} setField={setField} errors={errors} />
+  </WizardStage>
+  <WizardStage id={STAGE_B.id}>
+    <SectionB formData={formData} setField={setField} errors={errors} />
+  </WizardStage>
+  <WizardNavigation className='mt-6' /> {/* mt-6 for compact forms, mt-8 for larger ones */}
+</>
+```
+
+#### Section Component Structure
+
+```tsx
+function ExampleSection({ formData, setField, errors }) {
+  return (
+    <div className='space-y-6'>                              {/* space-y-6 for booking, space-y-4 for auth forms */}
+      <Heading level={5} className='mb-2'>Section Title</Heading>  {/* optional */}
+
+      {/* Side-by-side field pairs */}
+      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+        <Input label='First' ... />
+        <Input label='Last' ... />
+      </div>
+
+      {/* Full-width fields sit directly in the space-y wrapper */}
+      <Input label='Email' ... />
+    </div>
+  );
+}
+```
+
+#### Data Flow
+
+Section components receive these props from `useWizard()`:
+
+| Prop                        | Type                                   | Purpose                                                              |
+| --------------------------- | -------------------------------------- | -------------------------------------------------------------------- |
+| `formData`                  | `Record<string, string>`               | Current form values                                                  |
+| `setField` / `handleChange` | `(key: string, value: string) => void` | Wraps `updateFormData`                                               |
+| `errors`                    | `Record<string, string>`               | Validation errors (may be combined with server `actionData?.errors`) |
+
+#### Summary Stage Pattern
+
+Summary sections display submitted data in a label/value grid:
+
+```tsx
+<div className='grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm'>
+  <span className='text-slate-500'>Cleaning Type</span>
+  <span className='text-slate-900'>{cleaningTypeLabels[formData.cleaningType]}</span>
+</div>
 ```
 
 ## Additional Documentation
