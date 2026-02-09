@@ -3,13 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { companyConfig } from '~/core/config/config';
+import React from 'react';
 import { Link } from 'react-router';
 import { Heading } from '~/components/ui/heading';
 import { Text } from '~/components/ui/text';
+import { companyConfig } from '~/core/config/';
 
 /**
  * Props for the AuthLayout component.
@@ -49,7 +49,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
               <div className='flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600'>
                 <Sparkles className='h-5 w-5 text-white' />
               </div>
-              <span className='text-xl font-bold text-slate-900'>{companyConfig.Name}</span>
+              <span className='text-xl font-bold text-slate-900 select-none'>
+                {companyConfig.Name}
+              </span>
             </Link>
             <Heading level={4}>{title}</Heading>
             {subtitle && <Text className='mt-1 text-center'>{subtitle}</Text>}

@@ -17,6 +17,7 @@ export const circleBaseClasses = [
   'font-semibold',
   'transition-all',
   'duration-300',
+  'select-none',
 ];
 
 /** Tailwind classes for active step circle. */
@@ -39,6 +40,7 @@ export const labelBaseClasses = [
   'max-w-20',
   'text-center',
   'line-clamp-2',
+  'select-none',
 ];
 
 /** Tailwind classes for active step label. */

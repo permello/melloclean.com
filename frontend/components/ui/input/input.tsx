@@ -3,14 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import React, { useRef, useState } from 'react';
-import { cn } from '~/core/util/cn';
-import { inputVariants } from './ts/variants';
-import type { InputProps } from './ts/types';
-import { useTextField } from 'react-aria';
-import { mergeRefs } from '~/core/util/mergeRef';
 import { Eye, EyeOff } from 'lucide-react';
-import { input } from 'motion/react-client';
+import React, { useRef, useState } from 'react';
+import { useTextField } from 'react-aria';
+import { cn } from '~/core/util/cn';
+import { mergeRefs } from '~/core/util/mergeRef';
+import type { InputProps } from './ts/types';
+import { inputVariants } from './ts/variants';
 
 /**
  * Accessible input component with label, error, and hint support.
@@ -62,7 +61,7 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
 
   const inputClasses = cn(
     inputVariants({ variant: errorMessage ? 'error' : variant }),
-    isPassword && 'pr-12',
+    isPassword && 'pr-12 ',
     className,
   );
   const mRef = mergeRefs([ref, inputRef]);
@@ -88,12 +87,12 @@ const Input: React.FC<InputProps> = (props: InputProps) => {
         )}
       </div>
       {hint && !isInvalid && (
-        <p {...descriptionProps} className='text-sm text-slate-500'>
+        <p {...descriptionProps} className='text-sm text-slate-500 select-none'>
           {hint}
         </p>
       )}
       {isInvalid && (
-        <p {...errorMessageProps} className='text-sm text-red-500'>
+        <p {...errorMessageProps} className='text-sm text-red-500 select-none'>
           {errorMessage as string}
         </p>
       )}
