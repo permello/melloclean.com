@@ -16,6 +16,9 @@ class Config:
     are read from os.environ at import time.
     """
 
+    def __init__(self):
+        raise TypeError("Config cannot be instantiated. Use class attributes directly.")
+
     DATABASE_URL = DATABASE_URL
     SECRET_KEY = os.environ.get("SECRET_KEY")
     APP_URL = os.environ.get("APP_URL")

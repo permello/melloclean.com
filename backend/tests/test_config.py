@@ -4,6 +4,8 @@ Verifies that Config loads correct values from environment variables
 and that DATABASE_URL matches app.utils.config.
 """
 
+import pytest
+
 from app.config import Config
 from app.utils.config import DATABASE_URL
 
@@ -38,3 +40,8 @@ class TestConfig:
     def test_smtp_port_is_int(self):
         """SMTP_PORT should be an integer."""
         assert isinstance(Config.SMTP_PORT, int)
+
+    def test_cannot_be_instantiated(self):
+        """Config should not be instantiable."""
+        with pytest.raises(TypeError):
+            Config()
