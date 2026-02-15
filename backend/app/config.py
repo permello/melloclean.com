@@ -26,3 +26,6 @@ class Config:
     APP_URL = os.environ.get("APP_URL")
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS")
     SESSION_DURATION_DAYS = int(os.environ.get("SESSION_DURATION_DAYS"))
+    GMAIL_CREDENTIALS_FILE = os.environ.get("GMAIL_CREDENTIALS_FILE")
+    GMAIL_TOKEN_FILE = os.environ.get("GMAIL_TOKEN_FILE")
+    GMAIL_SENDER = os.environ.get("GMAIL_SENDER")
