@@ -9,7 +9,7 @@ import { validators } from '~/core/util/validation';
 /**
  * localStorage key for persisting booking form data.
  */
-export const BOOKING_STORAGE_KEY = 'melloclean_booking';
+export const BOOKING_STORAGE_KEY = 'booking';
 
 /**
  * General info stage config.

@@ -15,6 +15,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
+from app.company_config import COMPANY_NAME
 from app.config import Config
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
@@ -81,14 +82,14 @@ VERIFICATION_HTML = """\
         <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background-color:#ffffff;border-radius:8px;overflow:hidden;">
           <tr>
             <td style="background-color:#10b981;padding:24px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">MelloClean</h1>
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">{company_name}</h1>
             </td>
           </tr>
           <tr>
             <td style="padding:32px 24px;">
               <h2 style="margin:0 0 16px;color:#0f172a;font-size:20px;font-weight:600;">Welcome, {first_name}!</h2>
               <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.5;">
-                Thanks for signing up for MelloClean. Please verify your email address by clicking the button below.
+                Thanks for signing up for {company_name}. Please verify your email address by clicking the button below.
               </p>
               <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
                 <tr>
@@ -104,7 +105,7 @@ VERIFICATION_HTML = """\
           </tr>
           <tr>
             <td style="padding:16px 24px;background-color:#f8fafc;text-align:center;">
-              <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 MelloClean. All rights reserved.</p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 {company_name}. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -125,7 +126,7 @@ PASSWORD_RESET_HTML = """\
         <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background-color:#ffffff;border-radius:8px;overflow:hidden;">
           <tr>
             <td style="background-color:#10b981;padding:24px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">MelloClean</h1>
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">{company_name}</h1>
             </td>
           </tr>
           <tr>
@@ -148,7 +149,7 @@ PASSWORD_RESET_HTML = """\
           </tr>
           <tr>
             <td style="padding:16px 24px;background-color:#f8fafc;text-align:center;">
-              <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 MelloClean. All rights reserved.</p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;">&copy; 2026 {company_name}. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -167,8 +168,8 @@ def send_verification_email(first_name: str, email: str, verification_url: str) 
         email: Recipient email address.
         verification_url: Full URL for email verification.
     """
-    subject = "Verify Your Email — MelloClean"
-    html = VERIFICATION_HTML.format(first_name=first_name, verification_url=verification_url)
+    subject = f"Verify Your Email — {COMPANY_NAME}"
+    html = VERIFICATION_HTML.format(first_name=first_name, verification_url=verification_url, company_name=COMPANY_NAME)
     send_email(email, subject, html)
 
 
@@ -180,6 +181,6 @@ def send_password_reset_email(first_name: str, email: str, reset_url: str) -> No
         email: Recipient email address.
         reset_url: Full URL for password reset.
     """
-    subject = "Reset Your Password — MelloClean"
-    html = PASSWORD_RESET_HTML.format(first_name=first_name, reset_url=reset_url)
+    subject = f"Reset Your Password — {COMPANY_NAME}"
+    html = PASSWORD_RESET_HTML.format(first_name=first_name, reset_url=reset_url, company_name=COMPANY_NAME)
     send_email(email, subject, html)

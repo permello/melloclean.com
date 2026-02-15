@@ -3,18 +3,20 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
+import companyData from '../../../company.json';
+
 /**
  * Configuration interface for company information.
  */
 export interface CompanyConfig {
   /** Company email address */
-  Email: any;
+  Email: string;
   /** Company physical address */
-  Address: any;
+  Address: string;
   /** Business operating hours */
-  Hours: any;
+  Hours: string;
   /** Company phone number */
-  Phone: any;
+  Phone: string;
   /** Company name */
   Name: string;
 }
@@ -22,12 +24,6 @@ export interface CompanyConfig {
 /**
  * Company configuration containing business contact details.
  */
-const companyConfig: CompanyConfig = {
-  Name: 'Some Cleaning Company',
-  Phone: '(555) 123-4567',
-  Email: 'company@email.com',
-  Address: '123 A Street, TX 77001',
-  Hours: 'Mon-Sat: 7AM - 8PM',
-};
+const companyConfig: CompanyConfig = companyData;
 
 export { companyConfig };
