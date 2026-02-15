@@ -19,3 +19,4 @@ backend/venv/
 backend/.pytest_cache/
 
 .token.json
+.credentials.json
