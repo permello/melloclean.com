@@ -26,9 +26,3 @@ class Config:
     APP_URL = os.environ.get("APP_URL")
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS")
     SESSION_DURATION_DAYS = int(os.environ.get("SESSION_DURATION_DAYS"))
-
-    SMTP_HOST = os.environ.get("SMTP_HOST")
-    SMTP_PORT = int(os.environ.get("SMTP_PORT"))
-    SMTP_USER = os.environ.get("SMTP_USER")
-    SMTP_PASS = os.environ.get("SMTP_PASS")
-    SMTP_FROM = os.environ.get("SMTP_FROM")
