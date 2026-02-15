@@ -17,3 +17,5 @@ __pycache__/
 backend/.env
 backend/venv/
 backend/.pytest_cache/
+
+.token.json
