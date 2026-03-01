@@ -7,7 +7,6 @@ password reset, and verification resend routes. All routes are
 registered under the ``/api/auth`` prefix by the app factory.
 """
 
-import re
 from http import HTTPStatus
 
 from flask import Blueprint, g, jsonify, request
@@ -17,17 +16,16 @@ from app.middleware import set_session_cookie, clear_session_cookie
 from app.middleware.auth import require_auth
 from app.response import error, success, success_action, validation_error
 from app.services import auth_service
+from app.utils.validation import (
+    ZIP_RE,
+    serialize_user,
+    validate_confirm_password,
+    validate_email,
+    validate_name,
+    validate_password,
+)
 
 auth_bp = Blueprint("auth", __name__)
-
-"""Minimum password length enforced at the route level."""
-_MIN_PASSWORD_LENGTH = 8
-
-"""Email format regex matching the frontend validator."""
-_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
-
-"""US zip code regex matching the frontend validator."""
-_ZIP_RE = re.compile(r"^\d{5}$")
 
 """Maps AuthError codes to HTTP status codes."""
 _ERROR_STATUS = {
@@ -47,25 +45,6 @@ def _error_response(err: AuthError):
     """
     status = _ERROR_STATUS.get(err.code, HTTPStatus.BAD_REQUEST)
     return error(err.code, err.message, status)
-
-
-def _user_dict(user):
-    """Serialize a User model to a JSON-safe dict for client use.
-
-    Excludes id and role since the frontend does not need them.
-
-    Args:
-        user: A User SQLModel instance.
-
-    Returns:
-        A dict with email, name, and verification status.
-    """
-    return {
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "email_verified": user.email_verified,
-    }
 
 
 @auth_bp.route("/signup", methods=["POST"])
@@ -95,25 +74,10 @@ def signup():
 
     errors = []
 
-    if not email:
-        errors.append({"field": "email", "issue": "Required"})
-    if email and not _EMAIL_RE.match(email):
-        errors.append({"field": "email", "issue": "Invalid format"})
-
-    if not password:
-        errors.append({"field": "password", "issue": "Required"})
-    if password and len(password) < _MIN_PASSWORD_LENGTH:
-        errors.append({"field": "password", "issue": f"Must be at least {_MIN_PASSWORD_LENGTH} characters"})
-
-    if not first_name:
-        errors.append({"field": "firstName", "issue": "Required"})
-    if not last_name:
-        errors.append({"field": "lastName", "issue": "Required"})
-
-    if not confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Required"})
-    if confirm_password and password and password != confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Passwords do not match"})
+    validate_email(email, errors)
+    validate_password(password, errors)
+    validate_name(first_name, last_name, errors)
+    validate_confirm_password(confirm_password, password, errors)
 
     if not street:
         errors.append({"field": "street", "issue": "Required"})
@@ -123,7 +87,7 @@ def signup():
         errors.append({"field": "state", "issue": "Required"})
     if not zip_code:
         errors.append({"field": "zipCode", "issue": "Required"})
-    if zip_code and not _ZIP_RE.match(zip_code):
+    if zip_code and not ZIP_RE.match(zip_code):
         errors.append({"field": "zipCode", "issue": "Must be 5 digits"})
 
     if errors:
@@ -145,7 +109,7 @@ def signup():
     except AuthError as e:
         return _error_response(e)
 
-    resp = jsonify({"data": {"user": _user_dict(result["user"])}})
+    resp = jsonify({"data": {"user": serialize_user(result["user"])}})
     set_session_cookie(resp, result["session_token"])
     return resp, HTTPStatus.CREATED
 
@@ -168,10 +132,7 @@ def login():
 
     errors = []
 
-    if not email:
-        errors.append({"field": "email", "issue": "Required"})
-    if email and not _EMAIL_RE.match(email):
-        errors.append({"field": "email", "issue": "Invalid format"})
+    validate_email(email, errors)
     if not password:
         errors.append({"field": "password", "issue": "Required"})
 
@@ -188,7 +149,7 @@ def login():
     except AuthError as e:
         return _error_response(e)
 
-    resp = jsonify({"data": {"user": _user_dict(result["user"])}})
+    resp = jsonify({"data": {"user": serialize_user(result["user"])}})
     set_session_cookie(resp, result["session_token"])
     return resp, HTTPStatus.OK
 
@@ -220,16 +181,7 @@ def me():
     Returns:
         200 with user info on success, 401 if not authenticated.
     """
-    user = g.user
-    role = user["role"].value if hasattr(user["role"], "value") else str(user["role"])
-    return success({
-        "id": str(user["id"]),
-        "email": user["email"],
-        "first_name": user["first_name"],
-        "last_name": user["last_name"],
-        "role": role,
-        "email_verified": user["email_verified"],
-    })
+    return success(serialize_user(g.user))
 
 
 @auth_bp.route("/verify-email", methods=["POST"])
@@ -294,14 +246,8 @@ def reset_password():
 
     if not token:
         errors.append({"field": "token", "issue": "Required"})
-    if not password:
-        errors.append({"field": "password", "issue": "Required"})
-    if password and len(password) < _MIN_PASSWORD_LENGTH:
-        errors.append({"field": "password", "issue": f"Must be at least {_MIN_PASSWORD_LENGTH} characters"})
-    if not confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Required"})
-    if confirm_password and password and password != confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Passwords do not match"})
+    validate_password(password, errors)
+    validate_confirm_password(confirm_password, password, errors)
 
     if errors:
         return validation_error(errors)

@@ -8,9 +8,7 @@
  */
 export type {
   Role,
-  AuthUser,
   User,
-  AdminUser,
   ApiResponse,
   ApiActionResponse,
   AuthResponse,

@@ -25,23 +25,8 @@
 export type Role = 'CLIENT' | 'WORKER' | 'ADMIN';
 
 /**
- * User returned by auth endpoints (login/signup).
- * Excludes `id` and `role` since the frontend does not need them at auth time.
- */
-export interface AuthUser {
-  /** User email address */
-  email: string;
-  /** User first name */
-  first_name: string;
-  /** User last name */
-  last_name: string;
-  /** Whether the user's email has been verified */
-  email_verified: boolean;
-}
-
-/**
- * Full user object returned by `GET /api/auth/me`.
- * Includes `id` and `role` for dashboard and RBAC use.
+ * User object returned by all endpoints (login, signup, me, admin).
+ * Includes `id`, `role`, and `created_at` for a single, consistent user shape.
  */
 export interface User {
   /** Unique user identifier (UUID) */
@@ -56,13 +41,6 @@ export interface User {
   role: Role;
   /** Whether the user's email has been verified */
   email_verified: boolean;
-}
-
-/**
- * Admin-facing user object returned by admin endpoints.
- * Extends {@link User} with a creation timestamp.
- */
-export interface AdminUser extends User {
   /** ISO 8601 timestamp of when the user was created */
   created_at: string;
 }
@@ -88,11 +66,11 @@ export interface ApiActionResponse {
 
 /**
  * Auth response returned by login and signup endpoints.
- * Wraps an {@link AuthUser} in the standard data envelope.
+ * Wraps a {@link User} in the standard data envelope.
  */
 export interface AuthResponse {
   /** The authenticated user wrapped in a data envelope */
-  data: { user: AuthUser };
+  data: { user: User };
 }
 
 /**

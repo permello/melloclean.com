@@ -137,6 +137,7 @@ class TestValidateSession:
             assert result["user"]["first_name"] == "Alice"
             assert result["user"]["last_name"] == "Smith"
             assert result["user"]["role"] == Role.CLIENT
+            assert "created_at" in result["user"]
 
     def test_missing_token_returns_none(self):
         """validate_session should return None for a token not in DB."""

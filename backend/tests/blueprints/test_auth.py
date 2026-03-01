@@ -8,6 +8,7 @@ Each test uses a Flask test client with mocked service-layer dependencies.
 """
 
 import uuid
+from datetime import datetime, timezone
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from unittest.mock import MagicMock, patch
@@ -81,6 +82,7 @@ def _valid_session_result(role=Role.CLIENT, **user_overrides):
             "last_name": user_overrides.get("last_name", "User"),
             "role": role,
             "email_verified": user_overrides.get("email_verified", True),
+            "created_at": datetime(2026, 1, 1, tzinfo=timezone.utc),
         },
     }
 
@@ -128,8 +130,9 @@ class TestSignup:
         assert resp.status_code == HTTPStatus.CREATED
         data = resp.get_json()
         assert data["data"]["user"]["email"] == "new@test.com"
-        assert "id" not in data["data"]["user"]
-        assert "role" not in data["data"]["user"]
+        assert "id" in data["data"]["user"]
+        assert data["data"]["user"]["role"] == "CLIENT"
+        assert "created_at" in data["data"]["user"]
         cookie = _get_cookie(resp, COOKIE_NAME)
         assert cookie is not None
         assert cookie.value == "raw-tok"
@@ -291,8 +294,9 @@ class TestLogin:
         assert resp.status_code == HTTPStatus.OK
         data = resp.get_json()
         assert data["data"]["user"]["email"] == "login@test.com"
-        assert "id" not in data["data"]["user"]
-        assert "role" not in data["data"]["user"]
+        assert "id" in data["data"]["user"]
+        assert data["data"]["user"]["role"] == "CLIENT"
+        assert "created_at" in data["data"]["user"]
         cookie = _get_cookie(resp, COOKIE_NAME)
         assert cookie is not None
         assert cookie.value == "raw-tok"
@@ -417,6 +421,7 @@ class TestMe:
         assert data["data"]["last_name"] == "Doe"
         assert data["data"]["role"] == "CLIENT"
         assert data["data"]["email_verified"] is True
+        assert "created_at" in data["data"]
 
     def test_returns_401_without_auth(self, client):
         """Unauthenticated /me returns 401."""

@@ -88,6 +88,7 @@ def validate_session(token: str) -> dict | None:
                 "last_name": user.last_name,
                 "role": user.role,
                 "email_verified": user.email_verified,
+                "created_at": user.created_at,
             },
         }
 

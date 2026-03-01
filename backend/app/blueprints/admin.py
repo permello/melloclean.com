@@ -7,7 +7,6 @@ All routes require authentication and the ADMIN role. Registered
 under the ``/api/admin`` prefix by the app factory.
 """
 
-import re
 import uuid
 from http import HTTPStatus
 
@@ -21,43 +20,21 @@ from app.models.user import User
 from app.response import error, paginated, success, success_action, validation_error
 from app.services.session_service import revoke_all_user_sessions
 from app.utils.password import hash_password
+from app.utils.validation import (
+    serialize_user,
+    validate_confirm_password,
+    validate_email,
+    validate_name,
+    validate_password,
+)
 
 admin_bp = Blueprint("admin", __name__)
-
-"""Minimum password length enforced at the route level."""
-_MIN_PASSWORD_LENGTH = 8
-
-"""Email format regex matching the frontend validator."""
-_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 """Set of valid role strings for admin user creation."""
 _VALID_ROLES = {r.value for r in Role}
 
 """Default page size for paginated user listings."""
 _DEFAULT_PER_PAGE = 25
-
-
-def _user_dict(user):
-    """Serialize a User model to a JSON-safe dict for admin use.
-
-    Includes id, role, and created_at since the admin dashboard needs them.
-
-    Args:
-        user: A User SQLModel instance.
-
-    Returns:
-        A dict with id, email, name, role, verification status, and creation time.
-    """
-    role = user.role.value if hasattr(user.role, "value") else str(user.role)
-    return {
-        "id": str(user.id),
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "role": role,
-        "email_verified": user.email_verified,
-        "created_at": user.created_at.isoformat() if user.created_at else None,
-    }
 
 
 @admin_bp.route("/users", methods=["GET"])
@@ -84,7 +61,7 @@ def list_users():
                 select(User).order_by(User.created_at.desc())
             ).all()
             return paginated(
-                [_user_dict(u) for u in users],
+                [serialize_user(u) for u in users],
                 page=1,
                 page_size=len(users),
                 total=len(users),
@@ -105,7 +82,7 @@ def list_users():
         ).all()
 
         return paginated(
-            [_user_dict(u) for u in users],
+            [serialize_user(u) for u in users],
             page=page,
             page_size=per_page,
             total=total,
@@ -137,25 +114,10 @@ def create_user():
 
     errors = []
 
-    if not email:
-        errors.append({"field": "email", "issue": "Required"})
-    if email and not _EMAIL_RE.match(email):
-        errors.append({"field": "email", "issue": "Invalid format"})
-
-    if not password:
-        errors.append({"field": "password", "issue": "Required"})
-    if password and len(password) < _MIN_PASSWORD_LENGTH:
-        errors.append({"field": "password", "issue": f"Must be at least {_MIN_PASSWORD_LENGTH} characters"})
-
-    if not first_name:
-        errors.append({"field": "firstName", "issue": "Required"})
-    if not last_name:
-        errors.append({"field": "lastName", "issue": "Required"})
-
-    if not confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Required"})
-    if confirm_password and password and password != confirm_password:
-        errors.append({"field": "confirmPassword", "issue": "Passwords do not match"})
+    validate_email(email, errors)
+    validate_password(password, errors)
+    validate_name(first_name, last_name, errors)
+    validate_confirm_password(confirm_password, password, errors)
 
     if not role_str:
         errors.append({"field": "role", "issue": "Required"})
@@ -184,7 +146,7 @@ def create_user():
         db.commit()
         db.refresh(user)
 
-        return success(_user_dict(user), 201)
+        return success(serialize_user(user), 201)
 
 
 @admin_bp.route("/users/<user_id>/revoke-sessions", methods=["POST"])

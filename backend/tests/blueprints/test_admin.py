@@ -37,6 +37,7 @@ def _valid_session_result(role=Role.ADMIN, **user_overrides):
             "last_name": user_overrides.get("last_name", "User"),
             "role": role,
             "email_verified": user_overrides.get("email_verified", True),
+            "created_at": datetime(2026, 1, 1, tzinfo=timezone.utc),
         },
     }
 
