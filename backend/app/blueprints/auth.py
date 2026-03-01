@@ -7,6 +7,8 @@ password reset, and verification resend routes. All routes are
 registered under the ``/api/auth`` prefix by the app factory.
 """
 
+import re
+
 from flask import Blueprint, g, jsonify, request
 
 from app.errors import AuthError
@@ -18,6 +20,12 @@ auth_bp = Blueprint("auth", __name__)
 
 """Minimum password length enforced at the route level."""
 _MIN_PASSWORD_LENGTH = 8
+
+"""Email format regex matching the frontend validator."""
+_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+"""US zip code regex matching the frontend validator."""
+_ZIP_RE = re.compile(r"^\d{5}$")
 
 """Maps AuthError codes to HTTP status codes."""
 _ERROR_STATUS = {
@@ -40,21 +48,20 @@ def _error_response(err: AuthError):
 
 
 def _user_dict(user):
-    """Serialize a User model to a JSON-safe dict.
+    """Serialize a User model to a JSON-safe dict for client use.
+
+    Excludes id and role since the frontend does not need them.
 
     Args:
         user: A User SQLModel instance.
 
     Returns:
-        A dict with string id and role value.
+        A dict with email, name, and verification status.
     """
-    role = user.role.value if hasattr(user.role, "value") else str(user.role)
     return {
-        "id": str(user.id),
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "role": role,
         "email_verified": user.email_verified,
     }
 
@@ -63,8 +70,10 @@ def _user_dict(user):
 def signup():
     """Register a new user account.
 
-    Validates required fields and password length, then delegates to
-    auth_service.signup. Sets a session cookie on success.
+    Validates required fields, email format, password length,
+    confirmPassword match, address fields, and zip code format,
+    then delegates to auth_service.signup. Sets a session cookie
+    on success.
 
     Returns:
         201 with user data on success, 400 for validation errors,
@@ -74,15 +83,34 @@ def signup():
 
     email = data.get("email")
     password = data.get("password")
+    confirm_password = data.get("confirmPassword")
     first_name = data.get("firstName")
     last_name = data.get("lastName")
-    phone = data.get("phone")
+    street = data.get("street")
+    city = data.get("city")
+    state = data.get("state")
+    zip_code = data.get("zipCode")
 
     if not email or not password or not first_name or not last_name:
         return jsonify({"error": "Email, password, firstName, and lastName are required."}), 400
 
+    if not _EMAIL_RE.match(email):
+        return jsonify({"error": "Invalid email address."}), 400
+
     if len(password) < _MIN_PASSWORD_LENGTH:
         return jsonify({"error": f"Password must be at least {_MIN_PASSWORD_LENGTH} characters."}), 400
+
+    if not confirm_password:
+        return jsonify({"error": "confirmPassword is required."}), 400
+
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match."}), 400
+
+    if not street or not city or not state or not zip_code:
+        return jsonify({"error": "street, city, state, and zipCode are required."}), 400
+
+    if not _ZIP_RE.match(zip_code):
+        return jsonify({"error": "Zip code must be 5 digits."}), 400
 
     try:
         result = auth_service.signup(
@@ -90,7 +118,10 @@ def signup():
             password=password,
             first_name=first_name,
             last_name=last_name,
-            phone=phone,
+            street=street,
+            city=city,
+            state=state,
+            zip_code=zip_code,
             ip_address=request.remote_addr,
             user_agent=request.headers.get("User-Agent"),
         )
@@ -107,12 +138,12 @@ def signup():
 def login():
     """Authenticate a user with email and password.
 
-    Validates required fields, then delegates to auth_service.login.
-    Sets a session cookie on success.
+    Validates required fields and email format, then delegates to
+    auth_service.login. Sets a session cookie on success.
 
     Returns:
-        200 with user data on success, 400 for missing fields,
-        401 for invalid credentials.
+        200 with user data on success, 400 for missing fields or
+        invalid email format, 401 for invalid credentials.
     """
     data = request.get_json(silent=True) or {}
 
@@ -121,6 +152,9 @@ def login():
 
     if not email or not password:
         return jsonify({"error": "Email and password are required."}), 400
+
+    if not _EMAIL_RE.match(email):
+        return jsonify({"error": "Invalid email address."}), 400
 
     try:
         result = auth_service.login(
@@ -159,19 +193,17 @@ def me():
     """Return the current authenticated user's profile.
 
     Requires authentication. Returns the user dict from g.user which
-    was populated by the @require_auth decorator.
+    was populated by the @require_auth decorator. Excludes id and role
+    since the frontend does not need them.
 
     Returns:
         200 with user info on success, 401 if not authenticated.
     """
     user = g.user
-    role = user["role"].value if hasattr(user["role"], "value") else str(user["role"])
     return jsonify({
-        "id": str(user["id"]),
         "email": user["email"],
         "first_name": user["first_name"],
         "last_name": user["last_name"],
-        "role": role,
         "email_verified": user["email_verified"],
     }), 200
 
@@ -223,8 +255,8 @@ def forgot_password():
 def reset_password():
     """Reset a user's password using a reset token.
 
-    Validates the token and new password, then delegates to
-    auth_service.reset_password.
+    Validates the token, new password, and confirmPassword match,
+    then delegates to auth_service.reset_password.
 
     Returns:
         200 with success on success, 400 for validation or token errors.
@@ -232,12 +264,19 @@ def reset_password():
     data = request.get_json(silent=True) or {}
     token = data.get("token")
     password = data.get("password")
+    confirm_password = data.get("confirmPassword")
 
     if not token or not password:
         return jsonify({"error": "Token and password are required."}), 400
 
     if len(password) < _MIN_PASSWORD_LENGTH:
         return jsonify({"error": f"Password must be at least {_MIN_PASSWORD_LENGTH} characters."}), 400
+
+    if not confirm_password:
+        return jsonify({"error": "confirmPassword is required."}), 400
+
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match."}), 400
 
     try:
         auth_service.reset_password(token, password)

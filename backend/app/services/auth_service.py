@@ -31,7 +31,10 @@ def signup(
     password: str,
     first_name: str,
     last_name: str,
-    phone: str | None = None,
+    street: str = "",
+    city: str = "",
+    state: str = "",
+    zip_code: str = "",
     ip_address: str | None = None,
     user_agent: str | None = None,
 ) -> dict:
@@ -46,7 +49,10 @@ def signup(
         password: Plaintext password (min 8 chars).
         first_name: User's first name.
         last_name: User's last name.
-        phone: Optional phone number.
+        street: Street address.
+        city: City name.
+        state: US state abbreviation.
+        zip_code: 5-digit US zip code.
         ip_address: Optional client IP for session auditing.
         user_agent: Optional client user-agent for session auditing.
 
@@ -68,7 +74,10 @@ def signup(
             password_hash=hash_password(password),
             first_name=first_name,
             last_name=last_name,
-            phone=phone,
+            street=street,
+            city=city,
+            state=state,
+            zip_code=zip_code,
             role=Role.CLIENT,
         )
         db.add(user)

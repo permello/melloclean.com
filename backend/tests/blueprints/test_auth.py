@@ -44,12 +44,28 @@ def _make_user_obj(**overrides):
         "password_hash": "$2b$12$fakehash",
         "first_name": "Test",
         "last_name": "User",
-        "phone": None,
         "role": Role.CLIENT,
         "email_verified": False,
     }
     defaults.update(overrides)
     return User(**defaults)
+
+
+def _valid_signup_payload(**overrides):
+    """Return a valid signup payload dict with sensible defaults."""
+    defaults = {
+        "email": "new@test.com",
+        "password": "strongpassword",
+        "confirmPassword": "strongpassword",
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "street": "123 Main St",
+        "city": "Springfield",
+        "state": "IL",
+        "zipCode": "62701",
+    }
+    defaults.update(overrides)
+    return defaults
 
 
 def _valid_session_result(role=Role.CLIENT, **user_overrides):
@@ -107,15 +123,12 @@ class TestSignup:
         mock_result = {"session_token": "raw-tok", "user": user}
         with patch("app.blueprints.auth.auth_service") as mock_svc:
             mock_svc.signup.return_value = mock_result
-            resp = client.post("/api/auth/signup", json={
-                "email": "new@test.com",
-                "password": "strongpassword",
-                "firstName": "Jane",
-                "lastName": "Doe",
-            })
+            resp = client.post("/api/auth/signup", json=_valid_signup_payload())
         assert resp.status_code == 201
         data = resp.get_json()
         assert data["user"]["email"] == "new@test.com"
+        assert "id" not in data["user"]
+        assert "role" not in data["user"]
         cookie = _get_cookie(resp, COOKIE_NAME)
         assert cookie is not None
         assert cookie.value == "raw-tok"
@@ -128,80 +141,95 @@ class TestSignup:
             mock_svc.signup.return_value = mock_result
             client.post(
                 "/api/auth/signup",
-                json={
-                    "email": "ip@test.com",
-                    "password": "strongpassword",
-                    "firstName": "A",
-                    "lastName": "B",
-                },
+                json=_valid_signup_payload(email="ip@test.com"),
                 headers={"User-Agent": "TestBrowser/1.0"},
             )
             call_kwargs = mock_svc.signup.call_args[1]
             assert "ip_address" in call_kwargs
             assert call_kwargs["user_agent"] == "TestBrowser/1.0"
 
-    def test_optional_phone(self, client):
-        """Signup should forward phone when provided."""
+    def test_passes_address_fields_to_service(self, client):
+        """Signup should forward address fields to auth_service.signup."""
         user = _make_user_obj()
         mock_result = {"session_token": "tok", "user": user}
         with patch("app.blueprints.auth.auth_service") as mock_svc:
             mock_svc.signup.return_value = mock_result
-            client.post("/api/auth/signup", json={
-                "email": "phone@test.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-                "phone": "555-1234",
-            })
+            client.post("/api/auth/signup", json=_valid_signup_payload())
             call_kwargs = mock_svc.signup.call_args[1]
-            assert call_kwargs["phone"] == "555-1234"
+            assert call_kwargs["street"] == "123 Main St"
+            assert call_kwargs["city"] == "Springfield"
+            assert call_kwargs["state"] == "IL"
+            assert call_kwargs["zip_code"] == "62701"
 
     def test_missing_email_returns_400(self, client):
         """Signup without email returns 400."""
-        resp = client.post("/api/auth/signup", json={
-            "password": "strongpassword",
-            "firstName": "A",
-            "lastName": "B",
-        })
+        payload = _valid_signup_payload()
+        del payload["email"]
+        resp = client.post("/api/auth/signup", json=payload)
         assert resp.status_code == 400
         assert "error" in resp.get_json()
 
     def test_missing_password_returns_400(self, client):
         """Signup without password returns 400."""
-        resp = client.post("/api/auth/signup", json={
-            "email": "a@b.com",
-            "firstName": "A",
-            "lastName": "B",
-        })
+        payload = _valid_signup_payload()
+        del payload["password"]
+        resp = client.post("/api/auth/signup", json=payload)
         assert resp.status_code == 400
 
     def test_missing_first_name_returns_400(self, client):
         """Signup without firstName returns 400."""
-        resp = client.post("/api/auth/signup", json={
-            "email": "a@b.com",
-            "password": "strongpassword",
-            "lastName": "B",
-        })
+        payload = _valid_signup_payload()
+        del payload["firstName"]
+        resp = client.post("/api/auth/signup", json=payload)
         assert resp.status_code == 400
 
     def test_missing_last_name_returns_400(self, client):
         """Signup without lastName returns 400."""
-        resp = client.post("/api/auth/signup", json={
-            "email": "a@b.com",
-            "password": "strongpassword",
-            "firstName": "A",
-        })
+        payload = _valid_signup_payload()
+        del payload["lastName"]
+        resp = client.post("/api/auth/signup", json=payload)
         assert resp.status_code == 400
 
     def test_short_password_returns_400(self, client):
         """Password shorter than 8 chars returns 400."""
-        resp = client.post("/api/auth/signup", json={
-            "email": "a@b.com",
-            "password": "short",
-            "firstName": "A",
-            "lastName": "B",
-        })
+        resp = client.post("/api/auth/signup", json=_valid_signup_payload(
+            password="short", confirmPassword="short",
+        ))
         assert resp.status_code == 400
+
+    def test_confirm_password_mismatch_returns_400(self, client):
+        """Mismatched confirmPassword returns 400."""
+        resp = client.post("/api/auth/signup", json=_valid_signup_payload(
+            confirmPassword="differentpassword",
+        ))
+        assert resp.status_code == 400
+        assert "match" in resp.get_json()["error"].lower()
+
+    def test_invalid_email_format_returns_400(self, client):
+        """Invalid email format returns 400."""
+        resp = client.post("/api/auth/signup", json=_valid_signup_payload(
+            email="not-an-email",
+        ))
+        assert resp.status_code == 400
+        assert "email" in resp.get_json()["error"].lower()
+
+    def test_missing_address_fields_returns_400(self, client):
+        """Missing address fields returns 400."""
+        payload = _valid_signup_payload()
+        del payload["street"]
+        del payload["city"]
+        del payload["state"]
+        del payload["zipCode"]
+        resp = client.post("/api/auth/signup", json=payload)
+        assert resp.status_code == 400
+
+    def test_invalid_zip_code_returns_400(self, client):
+        """Invalid zip code format returns 400."""
+        resp = client.post("/api/auth/signup", json=_valid_signup_payload(
+            zipCode="1234",
+        ))
+        assert resp.status_code == 400
+        assert "zip" in resp.get_json()["error"].lower()
 
     def test_duplicate_email_returns_409(self, client):
         """EMAIL_TAKEN error returns 409."""
@@ -209,12 +237,9 @@ class TestSignup:
             mock_svc.signup.side_effect = AuthError(
                 "A user with this email already exists.", "EMAIL_TAKEN"
             )
-            resp = client.post("/api/auth/signup", json={
-                "email": "dupe@test.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-            })
+            resp = client.post("/api/auth/signup", json=_valid_signup_payload(
+                email="dupe@test.com",
+            ))
         assert resp.status_code == 409
         data = resp.get_json()
         assert data["code"] == "EMAIL_TAKEN"
@@ -241,6 +266,8 @@ class TestLogin:
         assert resp.status_code == 200
         data = resp.get_json()
         assert data["user"]["email"] == "login@test.com"
+        assert "id" not in data["user"]
+        assert "role" not in data["user"]
         cookie = _get_cookie(resp, COOKIE_NAME)
         assert cookie is not None
         assert cookie.value == "raw-tok"
@@ -273,6 +300,15 @@ class TestLogin:
             "email": "a@b.com",
         })
         assert resp.status_code == 400
+
+    def test_invalid_email_format_returns_400(self, client):
+        """Invalid email format returns 400."""
+        resp = client.post("/api/auth/login", json={
+            "email": "not-an-email",
+            "password": "strongpassword",
+        })
+        assert resp.status_code == 400
+        assert "email" in resp.get_json()["error"].lower()
 
     def test_invalid_credentials_returns_401(self, client):
         """INVALID_CREDENTIALS error returns 401."""
@@ -347,12 +383,12 @@ class TestMe:
             resp = client.get("/api/auth/me")
         assert resp.status_code == 200
         data = resp.get_json()
-        assert data["id"] == str(user_id)
         assert data["email"] == "me@test.com"
         assert data["first_name"] == "Jane"
         assert data["last_name"] == "Doe"
-        assert data["role"] == "CLIENT"
         assert data["email_verified"] is True
+        assert "id" not in data
+        assert "role" not in data
 
     def test_returns_401_without_auth(self, client):
         """Unauthenticated /me returns 401."""
@@ -448,6 +484,7 @@ class TestResetPassword:
             resp = client.post("/api/auth/reset-password", json={
                 "token": "valid-token",
                 "password": "newstrongpassword",
+                "confirmPassword": "newstrongpassword",
             })
         assert resp.status_code == 200
         assert resp.get_json()["success"] is True
@@ -459,6 +496,7 @@ class TestResetPassword:
         """Missing token returns 400."""
         resp = client.post("/api/auth/reset-password", json={
             "password": "newstrongpassword",
+            "confirmPassword": "newstrongpassword",
         })
         assert resp.status_code == 400
 
@@ -474,8 +512,27 @@ class TestResetPassword:
         resp = client.post("/api/auth/reset-password", json={
             "token": "valid-token",
             "password": "short",
+            "confirmPassword": "short",
         })
         assert resp.status_code == 400
+
+    def test_missing_confirm_password_returns_400(self, client):
+        """Missing confirmPassword returns 400."""
+        resp = client.post("/api/auth/reset-password", json={
+            "token": "valid-token",
+            "password": "newstrongpassword",
+        })
+        assert resp.status_code == 400
+
+    def test_confirm_password_mismatch_returns_400(self, client):
+        """Mismatched confirmPassword returns 400."""
+        resp = client.post("/api/auth/reset-password", json={
+            "token": "valid-token",
+            "password": "newstrongpassword",
+            "confirmPassword": "differentpassword",
+        })
+        assert resp.status_code == 400
+        assert "match" in resp.get_json()["error"].lower()
 
     def test_invalid_token_returns_400(self, client):
         """INVALID_TOKEN error returns 400."""
@@ -486,6 +543,7 @@ class TestResetPassword:
             resp = client.post("/api/auth/reset-password", json={
                 "token": "bad-token",
                 "password": "newstrongpassword",
+                "confirmPassword": "newstrongpassword",
             })
         assert resp.status_code == 400
         assert resp.get_json()["code"] == "INVALID_TOKEN"
@@ -499,6 +557,7 @@ class TestResetPassword:
             resp = client.post("/api/auth/reset-password", json={
                 "token": "expired-token",
                 "password": "newstrongpassword",
+                "confirmPassword": "newstrongpassword",
             })
         assert resp.status_code == 400
         assert resp.get_json()["code"] == "TOKEN_EXPIRED"

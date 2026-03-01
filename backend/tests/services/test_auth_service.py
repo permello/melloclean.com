@@ -245,8 +245,8 @@ class TestSignup:
                 except AuthError as e:
                     assert e.code == "EMAIL_TAKEN"
 
-    def test_stores_phone(self):
-        """signup should store the phone number when provided."""
+    def test_stores_address_fields(self):
+        """signup should store address fields when provided."""
         engine, db = _make_engine_and_session()
         with db:
             mock_session = MagicMock()
@@ -258,9 +258,15 @@ class TestSignup:
                  patch("app.services.auth_service.session_service", mock_session), \
                  patch("app.services.auth_service.email_service", mock_email), \
                  patch("app.services.auth_service.Config", mock_config):
-                signup("phone@test.com", "strongpassword", "A", "B", phone="555-1234")
+                signup(
+                    "addr@test.com", "strongpassword", "A", "B",
+                    street="123 Main St", city="Springfield", state="IL", zip_code="62701",
+                )
             user = db.exec(select(User)).first()
-            assert user.phone == "555-1234"
+            assert user.street == "123 Main St"
+            assert user.city == "Springfield"
+            assert user.state == "IL"
+            assert user.zip_code == "62701"
 
     def test_email_failure_does_not_raise(self):
         """signup should not raise if send_verification_email fails."""

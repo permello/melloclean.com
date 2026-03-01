@@ -26,7 +26,10 @@ class User(SQLModel, table=True):
     password_hash: str  # bcrypt hash — never store plaintext
     first_name: str
     last_name: str
-    phone: str | None = Field(default=None)
+    street: str = Field(default="")
+    city: str = Field(default="")
+    state: str = Field(default="")
+    zip_code: str = Field(default="")
     role: Role = Field(default=Role.CLIENT)
     email_verified: bool = Field(default=False)
     email_verified_at: datetime | None = Field(default=None)

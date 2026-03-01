@@ -48,6 +48,20 @@ def _auth_client(client, session_result):
     )
 
 
+def _valid_create_user_payload(**overrides):
+    """Return a valid create-user payload dict with sensible defaults."""
+    defaults = {
+        "email": "new@test.com",
+        "password": "strongpassword",
+        "confirmPassword": "strongpassword",
+        "firstName": "New",
+        "lastName": "User",
+        "role": "CLIENT",
+    }
+    defaults.update(overrides)
+    return defaults
+
+
 @pytest.fixture
 def app():
     """Create a Flask test app with mocked config."""
@@ -73,54 +87,91 @@ def client(app):
 class TestListUsers:
     """Tests for GET /api/admin/users."""
 
-    def test_returns_200_with_user_list(self, client):
-        """Admin listing users returns 200 with array of users."""
+    def _mock_user_objs(self, count=2):
+        """Create a list of mock user objects."""
+        objs = []
+        for i in range(count):
+            obj = MagicMock()
+            obj.id = uuid.uuid4()
+            obj.email = f"user{i+1}@test.com"
+            obj.first_name = "User"
+            obj.last_name = f"#{i+1}"
+            obj.role = MagicMock()
+            obj.role.value = "CLIENT"
+            obj.email_verified = i == 0
+            obj.created_at = datetime(2026, 1, i + 1, tzinfo=timezone.utc)
+            objs.append(obj)
+        return objs
+
+    def test_returns_paginated_response(self, client):
+        """Admin listing users returns 200 with paginated response shape."""
         session_result = _valid_session_result(role=Role.ADMIN)
-        mock_users = [
-            {
-                "id": str(uuid.uuid4()),
-                "email": "user1@test.com",
-                "first_name": "User",
-                "last_name": "One",
-                "role": "CLIENT",
-                "email_verified": True,
-                "created_at": datetime(2026, 1, 1, tzinfo=timezone.utc),
-            },
-            {
-                "id": str(uuid.uuid4()),
-                "email": "user2@test.com",
-                "first_name": "User",
-                "last_name": "Two",
-                "role": "CLIENT",
-                "email_verified": False,
-                "created_at": datetime(2026, 1, 2, tzinfo=timezone.utc),
-            },
-        ]
+        mock_user_objs = self._mock_user_objs(2)
         with _auth_client(client, session_result):
             with patch("app.blueprints.admin.get_session") as mock_get:
                 mock_db = MagicMock()
                 mock_get.return_value.__enter__ = lambda s: mock_db
                 mock_get.return_value.__exit__ = MagicMock(return_value=False)
-
-                # Create mock user objects with the expected attributes
-                mock_user_objs = []
-                for u in mock_users:
-                    obj = MagicMock()
-                    obj.id = u["id"]
-                    obj.email = u["email"]
-                    obj.first_name = u["first_name"]
-                    obj.last_name = u["last_name"]
-                    obj.role = u["role"]
-                    obj.email_verified = u["email_verified"]
-                    obj.created_at = u["created_at"]
-                    mock_user_objs.append(obj)
-
                 mock_db.exec.return_value.all.return_value = mock_user_objs
                 resp = client.get("/api/admin/users")
 
         assert resp.status_code == 200
         data = resp.get_json()
-        assert len(data) == 2
+        assert "users" in data
+        assert "page" in data
+        assert "per_page" in data
+        assert "total" in data
+        assert len(data["users"]) == 2
+
+    def test_pagination_defaults(self, client):
+        """Default pagination returns page 1 with per_page 25."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        mock_user_objs = self._mock_user_objs(2)
+        with _auth_client(client, session_result):
+            with patch("app.blueprints.admin.get_session") as mock_get:
+                mock_db = MagicMock()
+                mock_get.return_value.__enter__ = lambda s: mock_db
+                mock_get.return_value.__exit__ = MagicMock(return_value=False)
+                mock_db.exec.return_value.all.return_value = mock_user_objs
+                resp = client.get("/api/admin/users")
+
+        data = resp.get_json()
+        assert data["page"] == 1
+        assert data["per_page"] == 25
+
+    def test_pagination_custom(self, client):
+        """Custom page and per_page are reflected in response."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        mock_user_objs = self._mock_user_objs(1)
+        with _auth_client(client, session_result):
+            with patch("app.blueprints.admin.get_session") as mock_get:
+                mock_db = MagicMock()
+                mock_get.return_value.__enter__ = lambda s: mock_db
+                mock_get.return_value.__exit__ = MagicMock(return_value=False)
+                mock_db.exec.return_value.all.return_value = mock_user_objs
+                resp = client.get("/api/admin/users?page=2&per_page=10")
+
+        data = resp.get_json()
+        assert data["page"] == 2
+        assert data["per_page"] == 10
+
+    def test_all_flag(self, client):
+        """?all=true returns all users without pagination."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        mock_user_objs = self._mock_user_objs(3)
+        with _auth_client(client, session_result):
+            with patch("app.blueprints.admin.get_session") as mock_get:
+                mock_db = MagicMock()
+                mock_get.return_value.__enter__ = lambda s: mock_db
+                mock_get.return_value.__exit__ = MagicMock(return_value=False)
+                mock_db.exec.return_value.all.return_value = mock_user_objs
+                resp = client.get("/api/admin/users?all=true")
+
+        data = resp.get_json()
+        assert data["page"] == 1
+        assert data["per_page"] == 3
+        assert data["total"] == 3
+        assert len(data["users"]) == 3
 
     def test_returns_401_without_auth(self, client):
         """Unauthenticated request returns 401."""
@@ -155,13 +206,7 @@ class TestCreateUser:
                 mock_db.exec.return_value.first.return_value = None
                 mock_hash.return_value = "$2b$12$fakehash"
 
-                resp = client.post("/api/admin/users", json={
-                    "email": "new@test.com",
-                    "password": "strongpassword",
-                    "firstName": "New",
-                    "lastName": "User",
-                    "role": "CLIENT",
-                })
+                resp = client.post("/api/admin/users", json=_valid_create_user_payload())
 
         assert resp.status_code == 201
         data = resp.get_json()
@@ -169,113 +214,107 @@ class TestCreateUser:
 
     def test_returns_401_without_auth(self, client):
         """Unauthenticated request returns 401."""
-        resp = client.post("/api/admin/users", json={
-            "email": "a@b.com",
-            "password": "strongpassword",
-            "firstName": "A",
-            "lastName": "B",
-            "role": "CLIENT",
-        })
+        resp = client.post("/api/admin/users", json=_valid_create_user_payload())
         assert resp.status_code == 401
 
     def test_returns_403_for_non_admin(self, client):
         """Non-admin user returns 403."""
         session_result = _valid_session_result(role=Role.CLIENT)
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=_valid_create_user_payload())
         assert resp.status_code == 403
 
     def test_missing_email_returns_400(self, client):
         """Missing email returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["email"]
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=payload)
         assert resp.status_code == 400
 
     def test_missing_password_returns_400(self, client):
         """Missing password returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["password"]
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "firstName": "A",
-                "lastName": "B",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=payload)
         assert resp.status_code == 400
 
     def test_missing_first_name_returns_400(self, client):
         """Missing firstName returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["firstName"]
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "strongpassword",
-                "lastName": "B",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=payload)
         assert resp.status_code == 400
 
     def test_missing_last_name_returns_400(self, client):
         """Missing lastName returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["lastName"]
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=payload)
         assert resp.status_code == 400
 
     def test_missing_role_returns_400(self, client):
         """Missing role returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["role"]
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-            })
+            resp = client.post("/api/admin/users", json=payload)
         assert resp.status_code == 400
 
     def test_invalid_role_returns_400(self, client):
         """Invalid role value returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "strongpassword",
-                "firstName": "A",
-                "lastName": "B",
-                "role": "SUPERUSER",
-            })
+            resp = client.post("/api/admin/users", json=_valid_create_user_payload(
+                role="SUPERUSER",
+            ))
         assert resp.status_code == 400
 
     def test_short_password_returns_400(self, client):
         """Password shorter than 8 chars returns 400."""
         session_result = _valid_session_result(role=Role.ADMIN)
         with _auth_client(client, session_result):
-            resp = client.post("/api/admin/users", json={
-                "email": "a@b.com",
-                "password": "short",
-                "firstName": "A",
-                "lastName": "B",
-                "role": "CLIENT",
-            })
+            resp = client.post("/api/admin/users", json=_valid_create_user_payload(
+                password="short", confirmPassword="short",
+            ))
         assert resp.status_code == 400
+
+    def test_invalid_email_format_returns_400(self, client):
+        """Invalid email format returns 400."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        with _auth_client(client, session_result):
+            resp = client.post("/api/admin/users", json=_valid_create_user_payload(
+                email="not-an-email",
+            ))
+        assert resp.status_code == 400
+        assert "email" in resp.get_json()["error"].lower()
+
+    def test_missing_confirm_password_returns_400(self, client):
+        """Missing confirmPassword returns 400."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        payload = _valid_create_user_payload()
+        del payload["confirmPassword"]
+        with _auth_client(client, session_result):
+            resp = client.post("/api/admin/users", json=payload)
+        assert resp.status_code == 400
+
+    def test_confirm_password_mismatch_returns_400(self, client):
+        """Mismatched confirmPassword returns 400."""
+        session_result = _valid_session_result(role=Role.ADMIN)
+        with _auth_client(client, session_result):
+            resp = client.post("/api/admin/users", json=_valid_create_user_payload(
+                confirmPassword="differentpassword",
+            ))
+        assert resp.status_code == 400
+        assert "match" in resp.get_json()["error"].lower()
 
     def test_duplicate_email_returns_409(self, client):
         """Duplicate email returns 409."""
@@ -288,13 +327,9 @@ class TestCreateUser:
                 mock_get.return_value.__exit__ = MagicMock(return_value=False)
                 mock_db.exec.return_value.first.return_value = existing_user
 
-                resp = client.post("/api/admin/users", json={
-                    "email": "dupe@test.com",
-                    "password": "strongpassword",
-                    "firstName": "A",
-                    "lastName": "B",
-                    "role": "CLIENT",
-                })
+                resp = client.post("/api/admin/users", json=_valid_create_user_payload(
+                    email="dupe@test.com",
+                ))
 
         assert resp.status_code == 409
         assert resp.get_json()["code"] == "EMAIL_TAKEN"

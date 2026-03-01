@@ -7,6 +7,7 @@ All routes require authentication and the ADMIN role. Registered
 under the ``/api/admin`` prefix by the app factory.
 """
 
+import re
 import uuid
 
 from flask import Blueprint, jsonify, request
@@ -24,39 +25,89 @@ admin_bp = Blueprint("admin", __name__)
 """Minimum password length enforced at the route level."""
 _MIN_PASSWORD_LENGTH = 8
 
+"""Email format regex matching the frontend validator."""
+_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
 """Set of valid role strings for admin user creation."""
 _VALID_ROLES = {r.value for r in Role}
+
+"""Default page size for paginated user listings."""
+_DEFAULT_PER_PAGE = 25
+
+
+def _user_dict(user):
+    """Serialize a User model to a JSON-safe dict for admin use.
+
+    Includes id, role, and created_at since the admin dashboard needs them.
+
+    Args:
+        user: A User SQLModel instance.
+
+    Returns:
+        A dict with id, email, name, role, verification status, and creation time.
+    """
+    role = user.role.value if hasattr(user.role, "value") else str(user.role)
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "role": role,
+        "email_verified": user.email_verified,
+        "created_at": user.created_at.isoformat() if user.created_at else None,
+    }
 
 
 @admin_bp.route("/users", methods=["GET"])
 @require_auth
 @require_role("ADMIN")
 def list_users():
-    """List all users ordered by creation date descending.
+    """List users ordered by creation date descending.
 
-    Requires ADMIN role. Returns an array of user objects with
-    id, email, name, role, verification status, and creation time.
+    Supports pagination via query parameters. Returns all users when
+    ``?all=true`` is passed, otherwise defaults to page 1 with 25
+    results per page.
+
+    Query params:
+        page: Page number (default 1).
+        per_page: Results per page (default 25).
+        all: Set to ``true`` to return all users without pagination.
 
     Returns:
-        200 with array of user objects, 401/403 for auth failures.
+        200 with paginated user list, 401/403 for auth failures.
     """
     with get_session() as db:
+        if request.args.get("all", "").lower() == "true":
+            users = db.exec(
+                select(User).order_by(User.created_at.desc())
+            ).all()
+            return jsonify({
+                "users": [_user_dict(u) for u in users],
+                "page": 1,
+                "per_page": len(users),
+                "total": len(users),
+            }), 200
+
+        page = request.args.get("page", 1, type=int)
+        per_page = request.args.get("per_page", _DEFAULT_PER_PAGE, type=int)
+
+        total_query = db.exec(select(User)).all()
+        total = len(total_query)
+
+        offset = (page - 1) * per_page
         users = db.exec(
-            select(User).order_by(User.created_at.desc())
+            select(User)
+            .order_by(User.created_at.desc())
+            .offset(offset)
+            .limit(per_page)
         ).all()
 
-        return jsonify([
-            {
-                "id": str(u.id),
-                "email": u.email,
-                "first_name": u.first_name,
-                "last_name": u.last_name,
-                "role": u.role.value if hasattr(u.role, "value") else str(u.role),
-                "email_verified": u.email_verified,
-                "created_at": u.created_at.isoformat() if u.created_at else None,
-            }
-            for u in users
-        ]), 200
+        return jsonify({
+            "users": [_user_dict(u) for u in users],
+            "page": page,
+            "per_page": per_page,
+            "total": total,
+        }), 200
 
 
 @admin_bp.route("/users", methods=["POST"])
@@ -65,8 +116,9 @@ def list_users():
 def create_user():
     """Create a new user account as an admin.
 
-    Validates required fields, password length, and role value.
-    Admin-created accounts are pre-verified (email_verified=True).
+    Validates required fields, email format, password length,
+    confirmPassword match, and role value. Admin-created accounts
+    are pre-verified (email_verified=True).
 
     Returns:
         201 with created user on success, 400 for validation errors,
@@ -76,6 +128,7 @@ def create_user():
 
     email = data.get("email")
     password = data.get("password")
+    confirm_password = data.get("confirmPassword")
     first_name = data.get("firstName")
     last_name = data.get("lastName")
     role_str = data.get("role")
@@ -83,8 +136,17 @@ def create_user():
     if not email or not password or not first_name or not last_name or not role_str:
         return jsonify({"error": "Email, password, firstName, lastName, and role are required."}), 400
 
+    if not _EMAIL_RE.match(email):
+        return jsonify({"error": "Invalid email address."}), 400
+
     if len(password) < _MIN_PASSWORD_LENGTH:
         return jsonify({"error": f"Password must be at least {_MIN_PASSWORD_LENGTH} characters."}), 400
+
+    if not confirm_password:
+        return jsonify({"error": "confirmPassword is required."}), 400
+
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match."}), 400
 
     if role_str not in _VALID_ROLES:
         return jsonify({"error": f"Invalid role. Must be one of: {', '.join(sorted(_VALID_ROLES))}."}), 400
@@ -108,13 +170,7 @@ def create_user():
         db.commit()
         db.refresh(user)
 
-        return jsonify({
-            "id": str(user.id),
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": user.role.value if hasattr(user.role, "value") else str(user.role),
-        }), 201
+        return jsonify(_user_dict(user)), 201
 
 
 @admin_bp.route("/users/<user_id>/revoke-sessions", methods=["POST"])

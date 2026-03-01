@@ -82,21 +82,32 @@ class TestUserModel:
         assert user.email_verified is False
         assert user.email_verified_at is None
 
-    def test_phone_nullable(self, db):
-        """Phone number defaults to None when not provided."""
+    def test_address_fields_default_empty(self, db):
+        """Address fields default to empty strings when not provided."""
         user = self._make_user()
         db.add(user)
         db.flush()
 
-        assert user.phone is None
+        assert user.street == ""
+        assert user.city == ""
+        assert user.state == ""
+        assert user.zip_code == ""
 
-    def test_phone_can_be_set(self, db):
-        """Phone number can be set to a string value."""
-        user = self._make_user(phone="555-1234")
+    def test_address_fields_can_be_set(self, db):
+        """Address fields can be set to string values."""
+        user = self._make_user(
+            street="123 Main St",
+            city="Springfield",
+            state="IL",
+            zip_code="62701",
+        )
         db.add(user)
         db.flush()
 
-        assert user.phone == "555-1234"
+        assert user.street == "123 Main St"
+        assert user.city == "Springfield"
+        assert user.state == "IL"
+        assert user.zip_code == "62701"
 
     def test_timestamps_auto_set(self, db):
         """created_at and updated_at should be auto-populated datetimes."""
