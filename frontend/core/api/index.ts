@@ -6,4 +6,15 @@
  * Public API exports for Flask API types.
  * @module core/api
  */
-export type { Role, User, AuthResponse, ApiError } from './types';
+export type {
+  Role,
+  AuthUser,
+  User,
+  AdminUser,
+  ApiResponse,
+  ApiActionResponse,
+  AuthResponse,
+  PaginatedResponse,
+  ApiError,
+  ApiValidationError,
+} from './types';
