@@ -1,3 +1,5 @@
+# Copyright 2026 Eduardo Turcios. All rights reserved.
+# Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
 """Tests for admin blueprint routes.
 
 Verifies all three /api/admin endpoints: list users, create user,
@@ -6,6 +8,7 @@ service-layer dependencies and validates auth/role enforcement.
 """
 
 import uuid
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -81,7 +84,7 @@ class TestListUsers:
                 "last_name": "One",
                 "role": "CLIENT",
                 "email_verified": True,
-                "created_at": "2026-01-01T00:00:00",
+                "created_at": datetime(2026, 1, 1, tzinfo=timezone.utc),
             },
             {
                 "id": str(uuid.uuid4()),
@@ -90,7 +93,7 @@ class TestListUsers:
                 "last_name": "Two",
                 "role": "CLIENT",
                 "email_verified": False,
-                "created_at": "2026-01-02T00:00:00",
+                "created_at": datetime(2026, 1, 2, tzinfo=timezone.utc),
             },
         ]
         with _auth_client(client, session_result):
