@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 COPY company.json /app/company.json
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["sh", "-c", "alembic upgrade head && flask run --host=0.0.0.0 --port=5000"]

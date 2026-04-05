@@ -4,10 +4,10 @@
  */
 
 import { Form, Link, redirect } from 'react-router';
-import type { AuthResponse, ApiError, ApiValidationError } from '~/core/api';
 import { Text } from '~/components/ui/text';
 import { Wizard, type WizardStageConfig } from '~/components/ui/wizard';
-import { validators, validateForm } from '~/core/util/validation';
+import type { ApiError, ApiValidationError, AuthResponse } from '~/core/api';
+import { validateForm, validators } from '~/core/util/validation';
 import { AuthLayout } from '../components/auth-layout';
 import { SocialButtons } from '../components/social-buttons';
 import type { Route } from './+types/join';
@@ -33,6 +33,20 @@ export async function clientLoader(): Promise<null> {
   }
   return null;
 }
+
+/**
+ * Prevents the client loader from re-running after form submissions.
+ * The auth check only needs to happen on initial page load.
+ *
+ * @returns false to skip re-validation after actions
+ */
+export function shouldRevalidate() {
+  return false;
+}
+/**
+ * Prevents the loader from re-running after form submissions.
+ * The auth check only needs to run on initial navigation.
+ */
 
 /**
  * Client action to handle signup form submission.
@@ -72,8 +86,13 @@ export async function clientAction({ request }: Route.ClientActionArgs): Promise
       body: JSON.stringify({
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword,
         firstName: data.firstName,
         lastName: data.lastName,
+        street: data.street,
+        city: data.city,
+        state: data.state,
+        zipCode: data.zipCode,
       }),
     });
 
