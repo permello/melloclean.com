@@ -3,11 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { Form, Link, redirect } from 'react-router';
+import { Link, redirect, useSubmit } from 'react-router';
 import { Text } from '~/components/ui/text';
 import { Wizard, type WizardStageConfig } from '~/components/ui/wizard';
 import type { ApiError, ApiValidationError, AuthResponse } from '~/core/api';
-import { validateForm, validators } from '~/core/util/validation';
 import { AuthLayout } from '../components/auth-layout';
 import { SocialButtons } from '../components/social-buttons';
 import type { Route } from './+types/join';
@@ -59,25 +58,6 @@ export async function clientAction({ request }: Route.ClientActionArgs): Promise
   const formData = await request.formData();
   const data = Object.fromEntries(formData.entries()) as SignupFormData;
 
-  const errors = validateForm(data, {
-    firstName: [(v) => validators.required(v, 'First name')],
-    lastName: [(v) => validators.required(v, 'Last name')],
-    email: [(v) => validators.required(v, 'Email'), validators.email],
-    password: [(v) => validators.required(v, 'Password'), (v) => validators.minLength(v, 8)],
-    confirmPassword: [
-      (v) => validators.required(v, 'Confirm password'),
-      validators.confirmPassword,
-    ],
-    street: [(v) => validators.required(v, 'Street address')],
-    city: [(v) => validators.required(v, 'City')],
-    state: [(v) => validators.required(v, 'State')],
-    zipCode: [(v) => validators.required(v, 'Zip code'), validators.zipCode],
-  });
-
-  if (Object.keys(errors).length > 0) {
-    return { errors };
-  }
-
   try {
     const response = await fetch('/api/auth/signup', {
       method: 'POST',
@@ -116,13 +96,13 @@ export async function clientAction({ request }: Route.ClientActionArgs): Promise
  * @returns Signup page with wizard form and social buttons
  */
 export default function JoinPage() {
+  const submit = useSubmit();
+
   return (
     <AuthLayout title='Create your account' subtitle='Join us to book your cleaning services'>
-      <Form method='post'>
-        <Wizard stages={signUpStages}>
-          <JoinFormContent />
-        </Wizard>
-      </Form>
+      <Wizard stages={signUpStages} onComplete={(formData) => submit(formData, { method: 'post' })}>
+        <JoinFormContent />
+      </Wizard>
 
       <SocialButtons />
 
