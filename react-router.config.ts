@@ -4,5 +4,6 @@ export default {
   // Config options...
   // Disabled for static SPA export (GitHub Pages)
   ssr: false,
+  prerender: ['/', '/login', '/join'],
   appDirectory: 'frontend',
 } satisfies Config;
