@@ -4,11 +4,9 @@
  */
 
 import React from 'react';
-import { useActionData, useNavigation } from 'react-router';
 import { useWizard, WizardIndicator, WizardNavigation, WizardStage } from '~/components/ui/wizard';
 import { AccountSection, AddressSection } from './components';
 import { ACCOUNT_CONFIG, ADDRESS_CONFIG } from './ts/constants';
-import type { ActionData } from './ts/types';
 
 /**
  * Internal component containing the wizard form fields.
@@ -18,11 +16,8 @@ import type { ActionData } from './ts/types';
  */
 export function JoinFormContent() {
   const { errors, formData, updateFormData } = useWizard();
-  const actionData = useActionData<ActionData>();
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === 'submitting';
 
-  const combinedErrors = { ...errors, ...actionData?.errors };
+  const combinedErrors = { ...errors };
 
   /**
    * Updates a single form field in the wizard's shared form state.
@@ -54,11 +49,7 @@ export function JoinFormContent() {
         />
       </WizardStage>
 
-      <WizardNavigation
-        isSubmitting={isSubmitting}
-        completeLabel='Create Account'
-        className='mt-6'
-      />
+      <WizardNavigation completeLabel='Create Account' className='mt-6' />
     </React.Fragment>
   );
 }
