@@ -37,12 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <Meta />
         <Links />
-        {/* Restore path from GitHub Pages 404.html SPA redirect */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var s=window.location.search;if(s.indexOf('?p=/')!==-1){var p=s.slice(s.indexOf('?p=')+3).replace(/~and~/g,'&');window.history.replaceState(null,null,window.location.pathname.slice(0,window.location.pathname.lastIndexOf('/'))+p+(s.indexOf('&q=')!==-1?'?'+s.slice(s.indexOf('&q=')+3):'')+(window.location.hash||''));}})();`,
-          }}
-        />
+        <script src='/melloclean.com/spa-redirect.js' />
       </head>
       <body>
         {children}
