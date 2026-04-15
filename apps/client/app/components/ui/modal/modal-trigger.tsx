@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { type OverlayTriggerProps, useOverlayTriggerState } from '@react-stately/overlays';
+import { type OverlayTriggerProps, useOverlayTriggerState } from 'react-stately';
 
 import React from 'react';
 import { useOverlayTrigger } from 'react-aria';

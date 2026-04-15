@@ -4,11 +4,11 @@
  */
 
 import React, { useRef } from 'react';
-import { cn } from '~/core/util/cn';
-import { buttonVariants, loadingVariants } from './ts/variants';
-import type { ButtonProps, LoadingProps } from './ts/types';
 import { mergeProps, useButton, useFocusRing, useHover } from 'react-aria';
+import { cn } from '~/core/util/cn';
 import { mergeRefs } from '~/core/util/mergeRef';
+import type { ButtonProps, LoadingProps } from './ts/types';
+import { buttonVariants, loadingVariants } from './ts/variants';
 
 /**
  * Loading spinner displayed inside the button when loading.

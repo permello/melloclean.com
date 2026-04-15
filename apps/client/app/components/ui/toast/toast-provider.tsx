@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useToastState } from '@react-stately/toast';
+import { useToastState } from 'react-stately';
 import { ToastRegion } from './toast-region';
 import type { ToastContent, ToastVariant, ToastActions } from './ts/types';
 

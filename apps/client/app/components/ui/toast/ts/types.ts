@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import type { QueuedToast, ToastState } from '@react-stately/toast';
+import type { QueuedToast, ToastState } from 'react-stately';
 
 /**
  * Available toast notification variants.

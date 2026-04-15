@@ -4,7 +4,7 @@
  */
 
 import React, { useRef } from 'react';
-import { useToast } from '@react-aria/toast';
+import { useToast } from 'react-aria';
 import { motion } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '~/core/util/cn';

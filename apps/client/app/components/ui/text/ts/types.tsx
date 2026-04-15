@@ -4,8 +4,8 @@
  */
 
 import type { VariantProps } from 'class-variance-authority';
-import type { ElementType, ComponentPropsWithoutRef } from 'react';
-import type { TextVariants } from '../ts/variants';
+import type { ComponentPropsWithoutRef, ElementType } from 'react';
+import type { TextVariants } from './variants';
 
 /**
  * Props for the polymorphic Text component.

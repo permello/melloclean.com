@@ -7,7 +7,7 @@ import type { VariantProps } from 'class-variance-authority';
 import type { ReactNode } from 'react';
 import type { modalPanelVariants } from './variants';
 import type { AriaModalOverlayProps, OverlayTriggerProps } from 'react-aria';
-import { type OverlayTriggerState } from '@react-stately/overlays';
+import { type OverlayTriggerState } from 'react-stately';
 
 /**
  * Style props for the Modal component controlling panel size and custom styles.

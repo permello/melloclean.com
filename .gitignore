@@ -1,22 +1,20 @@
 .DS_Store
 .env
-/node_modules/
+node_modules/
 
 # React Router
-/.react-router/
-/build/
+.react-router/
+build/
 
-/.claude/
-CLAUDE.md
+#turbo 
+.turbo/
 
 # Python
 __pycache__/
+.pytest_cache/
 *.pyc
-
-# Backend
-backend/.env
-backend/venv/
-backend/.pytest_cache/
-
+venv/
 .token.json
 .credentials.json
+
+
