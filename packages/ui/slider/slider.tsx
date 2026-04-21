@@ -4,7 +4,7 @@
  */
 
 import { useRef, useCallback } from 'react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { trackClasses, fillClasses } from './ts/constants';
 import { sliderThumbVariants } from './ts/variants';
 import type { SliderProps } from './ts/types';

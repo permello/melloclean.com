@@ -5,8 +5,8 @@
 
 import React, { useRef } from 'react';
 import { mergeProps, useButton, useFocusRing, useHover } from 'react-aria';
-import { cn } from '~/core/util/cn';
-import { mergeRefs } from '~/core/util/mergeRef';
+import { cn } from '../util/cn';
+import { mergeRefs } from '../util/mergeRef';
 import type { ButtonProps, LoadingProps } from './ts/types';
 import { buttonVariants, loadingVariants } from './ts/variants';
 

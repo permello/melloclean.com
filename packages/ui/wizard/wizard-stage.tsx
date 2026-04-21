@@ -4,7 +4,7 @@
  */
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { useWizard } from './wizard-context';
 import type { WizardStageProps } from './ts/types';
 

@@ -6,8 +6,8 @@
 import { Eye, EyeOff } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTextField } from 'react-aria';
-import { cn } from '~/core/util/cn';
-import { mergeRefs } from '~/core/util/mergeRef';
+import { cn } from '../util/cn';
+import { mergeRefs } from '../util/mergeRef';
 import type { InputProps } from './ts/types';
 import { inputVariants } from './ts/variants';
 

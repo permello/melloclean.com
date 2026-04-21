@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { useWizard } from './wizard-context';
 import { circleVariants, labelVariants, connectorVariants } from './ts/variants';
 import type { WizardIndicatorProps } from './ts/types';

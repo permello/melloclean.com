@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { Button } from '~/components/ui/button';
 import { useWizard } from './wizard-context';
 import type { WizardNavigationProps } from './ts/types';

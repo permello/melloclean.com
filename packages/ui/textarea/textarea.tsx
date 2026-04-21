@@ -4,7 +4,7 @@
  */
 
 import React, { useId } from 'react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { textareaVariants } from './ts/variants';
 import type { TextareaProps } from './ts/types';
 

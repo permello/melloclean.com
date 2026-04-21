@@ -5,7 +5,7 @@
 
 import { useState, useRef } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { selectTriggerVariants } from './ts/variants';
 import { listboxClasses, optionBaseClasses } from './ts/constants';
 import type { SelectProps } from './ts/types';

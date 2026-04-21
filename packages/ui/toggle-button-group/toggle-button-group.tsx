@@ -5,7 +5,7 @@
 
 import { useCallback } from 'react';
 import { Check } from 'lucide-react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { toggleButtonVariants } from './ts/variants';
 import type { ToggleButtonGroupProps } from './ts/types';
 

@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { WizardProvider } from './wizard-context';
 import type { WizardProps } from './ts/types';
 

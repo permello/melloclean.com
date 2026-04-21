@@ -7,7 +7,7 @@ import { useRef } from 'react';
 import type { ModalProps } from './ts/types';
 
 import { Overlay, useModalOverlay } from 'react-aria';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { backdropBaseClasses } from './ts/constants';
 import { modalPanelVariants } from './ts/variants';
 /**

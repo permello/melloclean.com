@@ -4,7 +4,7 @@
  */
 
 import type { ElementType } from 'react';
-import { cn } from '~/core/util/cn';
+import { cn } from '../util/cn';
 import { TextVariants } from './ts/variants';
 import type { TextProps } from './ts/types';
 
