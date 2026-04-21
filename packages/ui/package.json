@@ -1,0 +1,8 @@
+{
+  "name": "@permello/ui",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.js"
+  }
+}
