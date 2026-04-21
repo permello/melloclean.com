@@ -3,13 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import React, { useRef } from 'react';
 import { useToast } from 'react-aria';
-import { motion } from 'motion';
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '../util/cn';
-import { toastVariants } from './ts/variants';
 import type { ToastProps } from './ts/types';
+import { toastVariants } from './ts/variants';
 
 /**
  * Icon mapping for each toast variant.

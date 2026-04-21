@@ -3,13 +3,13 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { useState, useRef } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useRef, useState } from 'react';
 import { cn } from '../util/cn';
-import { selectTriggerVariants } from './ts/variants';
 import { listboxClasses, optionBaseClasses } from './ts/constants';
 import type { SelectProps } from './ts/types';
-import { AnimatePresence, motion } from 'motion';
+import { selectTriggerVariants } from './ts/variants';
 
 /**
  * Accessible select dropdown component with label, error, and hint support.

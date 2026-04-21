@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { services, colorClasses } from './constants';
 import { Heading, Text } from '@permello/ui';

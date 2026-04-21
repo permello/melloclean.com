@@ -3,10 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion, AnimatePresence } from 'motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '../util/cn';
-import { useWizard } from './wizard-context';
 import type { WizardStageProps } from './ts/types';
+import { useWizard } from './wizard-context';
 
 /**
  * Container for a single wizard stage with animated transitions.

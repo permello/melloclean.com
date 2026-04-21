@@ -3,9 +3,9 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
+import { AnimatePresence } from 'motion/react';
 import React, { useRef } from 'react';
 import { useToastRegion } from 'react-aria';
-import { AnimatePresence } from 'motion';
 import { Toast } from './toast';
 import type { ToastRegionProps } from './ts/types';
 

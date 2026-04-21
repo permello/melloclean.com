@@ -3,12 +3,12 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'motion';
 import { Check } from 'lucide-react';
+import { motion } from 'motion/react';
 import { cn } from '../util/cn';
-import { useWizard } from './wizard-context';
-import { circleVariants, labelVariants, connectorVariants } from './ts/variants';
 import type { WizardIndicatorProps } from './ts/types';
+import { circleVariants, connectorVariants, labelVariants } from './ts/variants';
+import { useWizard } from './wizard-context';
 
 /**
  * Calculates the visible range of steps for pagination.

@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { Menu, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';

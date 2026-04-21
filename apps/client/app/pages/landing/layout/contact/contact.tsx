@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, Clock, ArrowRight } from 'lucide-react';
 import { Button } from '@permello/ui';
 import { companyConfig } from '~/core/config';
