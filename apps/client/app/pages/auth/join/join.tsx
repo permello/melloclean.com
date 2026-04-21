@@ -4,8 +4,7 @@
  */
 
 import { Form, Link } from 'react-router';
-import { Text } from '~/components/ui/text';
-import { Wizard, type WizardStageConfig } from '~/components/ui/wizard';
+import { Text, Wizard, type WizardStageConfig } from '@permello/ui';
 import { AuthLayout } from '../components/auth-layout';
 import { SocialButtons } from '../components/social-buttons';
 import type { Route } from './+types/join';

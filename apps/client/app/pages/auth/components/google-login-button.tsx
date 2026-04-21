@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { useToast } from '~/components/ui/toast';
+import { useToast } from '@permello/ui';
 
 /**
  * Google brand icon SVG component.

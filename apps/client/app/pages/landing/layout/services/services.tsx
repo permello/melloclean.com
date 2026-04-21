@@ -6,8 +6,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { services, colorClasses } from './constants';
-import { Heading } from '~/components/ui/heading';
-import { Text } from '~/components/ui/text';
+import { Heading, Text } from '@permello/ui';
 
 /**
  * Services section displaying available cleaning service offerings.

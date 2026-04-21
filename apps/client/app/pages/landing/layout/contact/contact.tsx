@@ -5,7 +5,7 @@
 
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, ArrowRight } from 'lucide-react';
-import { Button } from '~/components/ui/button';
+import { Button } from '@permello/ui';
 import { companyConfig } from '~/core/config';
 
 /**

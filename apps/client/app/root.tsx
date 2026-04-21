@@ -14,7 +14,7 @@ import {
 
 import type { Route } from './+types/root';
 import './core/theme/app.css';
-import { ToastProvider } from '~/components/ui/toast';
+import { ToastProvider } from '@permello/ui';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

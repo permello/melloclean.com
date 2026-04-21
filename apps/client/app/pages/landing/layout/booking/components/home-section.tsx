@@ -2,9 +2,7 @@
  * @copyright 2026 Eduardo Turcios. All rights reserved.
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
-import { Heading } from '~/components/ui/heading';
-import { Input } from '~/components/ui/input';
-import { Select, type SelectOption } from '~/components/ui/select';
+import { Heading, Input, Select, type SelectOption } from '@permello/ui';
 import type { ValidationErrors } from '~/core/util/validation';
 
 /**

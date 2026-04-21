@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import type { WizardStageConfig } from '~/components/ui/wizard';
+import type { WizardStageConfig } from '@permello/ui';
 import { validators } from '~/core/util/validation';
 
 /**

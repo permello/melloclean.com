@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { useActionData, useNavigation } from 'react-router';
-import { useWizard, WizardIndicator, WizardNavigation, WizardStage } from '~/components/ui/wizard';
+import { useWizard, WizardIndicator, WizardNavigation, WizardStage } from '@permello/ui';
 import { AccountSection, AddressSection } from './components';
 import { ACCOUNT_CONFIG, ADDRESS_CONFIG } from './ts/constants';
 import type { ActionData } from './ts/types';

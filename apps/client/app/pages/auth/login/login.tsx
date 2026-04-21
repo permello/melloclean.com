@@ -4,9 +4,7 @@
  */
 
 import { Form, Link, useActionData, useNavigation } from 'react-router';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Text } from '~/components/ui/text';
+import { Button, Input, Text } from '@permello/ui';
 import { validateForm, validators, type ValidationErrors } from '~/core/util/validation';
 import { AuthLayout } from '../components/auth-layout';
 import { PasswordInput } from '../components/password-input';

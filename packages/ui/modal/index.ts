@@ -8,4 +8,5 @@
  * @module components/ui/modal
  */
 export * from './modal';
+export * from './modal-trigger';
 export type { ModalProps } from './ts/types';

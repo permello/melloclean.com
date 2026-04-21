@@ -6,9 +6,7 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
-import { Button } from '~/components/ui/button';
-import { Heading } from '~/components/ui/heading';
-import { Text } from '~/components/ui/text';
+import { Button, Heading, Text } from '@permello/ui';
 import { BookingModal } from '../booking/booking-modal';
 
 /**
