@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion';
 import { Check } from 'lucide-react';
 import { cn } from '../util/cn';
 import { useWizard } from './wizard-context';

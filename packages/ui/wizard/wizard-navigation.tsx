@@ -4,7 +4,7 @@
  */
 
 import { cn } from '../util/cn';
-import { Button } from '~/components/ui/button';
+import { Button } from '../button';
 import { useWizard } from './wizard-context';
 import type { WizardNavigationProps } from './ts/types';
 

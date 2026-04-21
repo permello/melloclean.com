@@ -9,7 +9,7 @@ import { cn } from '../util/cn';
 import { selectTriggerVariants } from './ts/variants';
 import { listboxClasses, optionBaseClasses } from './ts/constants';
 import type { SelectProps } from './ts/types';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion';
 
 /**
  * Accessible select dropdown component with label, error, and hint support.

@@ -5,7 +5,7 @@
 
 import React, { useRef } from 'react';
 import { useToastRegion } from 'react-aria';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'motion';
 import { Toast } from './toast';
 import type { ToastRegionProps } from './ts/types';
 

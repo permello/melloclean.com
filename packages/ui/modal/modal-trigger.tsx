@@ -7,7 +7,7 @@ import { type OverlayTriggerProps, useOverlayTriggerState } from 'react-stately'
 
 import React from 'react';
 import { useOverlayTrigger } from 'react-aria';
-import { Button, type ButtonProps } from '~/components/ui/button';
+import { Button, type ButtonProps } from '../button';
 import { Modal } from './modal';
 
 /**

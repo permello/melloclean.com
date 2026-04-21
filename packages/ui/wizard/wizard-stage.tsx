@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion';
 import { cn } from '../util/cn';
 import { useWizard } from './wizard-context';
 import type { WizardStageProps } from './ts/types';

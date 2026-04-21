@@ -5,7 +5,7 @@
 
 import React, { useRef } from 'react';
 import { useToast } from 'react-aria';
-import { motion } from 'framer-motion';
+import { motion } from 'motion';
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '../util/cn';
 import { toastVariants } from './ts/variants';
