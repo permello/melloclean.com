@@ -1,0 +1,25 @@
+{
+  "name": "@permello/ui",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./tailwind.css": "./tailwind.css"
+  },
+  "dependencies": {
+    "react-aria": "^3.47.0",
+    "tailwind-merge": "^3.5.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwindcss": "^4.2.2",
+    "motion": "^12.38.0",
+    "lucide-react": "^0.577.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  }
+}

@@ -4,7 +4,7 @@
  */
 
 import { Sparkles, Facebook, Instagram, Twitter } from 'lucide-react';
-import { Heading } from '~/components/ui/heading';
+import { Heading } from '@permello/ui';
 import { companyConfig } from '~/core/config';
 
 /**

@@ -3,10 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Check, Star } from 'lucide-react';
 import { Link } from 'react-router';
-import { Button } from '~/components/ui/button';
+import { Button } from '@permello/ui';
 
 /**
  * Pricing plan configurations.

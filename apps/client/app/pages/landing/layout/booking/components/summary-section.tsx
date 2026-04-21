@@ -3,8 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { Heading } from '~/components/ui/heading';
-import { Text } from '~/components/ui/text';
+import { Heading, Text } from '@permello/ui';
 
 /**
  * Props for the BookingSummary component.

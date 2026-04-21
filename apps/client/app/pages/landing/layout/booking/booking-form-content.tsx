@@ -4,7 +4,7 @@
  */
 
 import { useCallback } from 'react';
-import { WizardIndicator, WizardNavigation, WizardStage, useWizard } from '~/components/ui/wizard';
+import { WizardIndicator, WizardNavigation, WizardStage, useWizard } from '@permello/ui';
 import { GeneralSection, HomeSection, SummarySection, VisitSection } from './components';
 import { GENERAL_CONFIG, HOME_CONFIG, SUMMARY_CONFIG, VISIT_CONFIG } from './ts/constants';
 /**

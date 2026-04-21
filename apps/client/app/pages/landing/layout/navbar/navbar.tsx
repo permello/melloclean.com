@@ -3,11 +3,11 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { Menu, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { Button } from '~/components/ui/button';
+import { Button } from '@permello/ui';
 import { companyConfig } from '~/core/config';
 import { BookingModal } from '../booking/booking-modal';
 

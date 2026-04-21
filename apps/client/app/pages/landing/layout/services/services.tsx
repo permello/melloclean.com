@@ -3,11 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { services, colorClasses } from './constants';
-import { Heading } from '~/components/ui/heading';
-import { Text } from '~/components/ui/text';
+import { Heading, Text } from '@permello/ui';
 
 /**
  * Services section displaying available cleaning service offerings.

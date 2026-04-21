@@ -3,12 +3,11 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
-import { Heading } from '~/components/ui/heading';
-import { Text } from '~/components/ui/text';
+import { Heading, Text } from '@permello/ui';
 import { companyConfig } from '~/core/config/';
 
 /**
