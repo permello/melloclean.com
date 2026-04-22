@@ -1,0 +1,12 @@
+{
+  "name": "@permello/shared",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./types/api": "./types/api.ts",
+    "./config": "./config/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

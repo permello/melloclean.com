@@ -3,7 +3,7 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import companyData from '../../../../../company.json';
+import companyData from './company.json';
 
 /**
  * Configuration interface for company information.

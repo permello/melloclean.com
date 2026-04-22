@@ -5,7 +5,7 @@
 
 import type { Route } from './+types/landing';
 
-import { companyConfig } from '~/core/config';
+import { companyConfig } from '@permello/shared/config';
 import { Contact, Footer, Hero, Navbar, Pricing, Services, Testimonials } from './layout';
 
 /**

@@ -3,9 +3,9 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { Sparkles, Facebook, Instagram, Twitter } from 'lucide-react';
+import { companyConfig } from '@permello/shared/config';
 import { Heading } from '@permello/ui';
-import { companyConfig } from '~/core/config';
+import { Facebook, Instagram, Sparkles, Twitter } from 'lucide-react';
 
 /**
  * Site footer with company info, navigation links, and social media.

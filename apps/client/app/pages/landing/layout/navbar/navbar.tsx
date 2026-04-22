@@ -3,12 +3,12 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { AnimatePresence, motion } from 'motion/react';
+import { companyConfig } from '@permello/shared/config';
+import { Button } from '@permello/ui';
 import { Menu, Sparkles, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import { Button } from '@permello/ui';
-import { companyConfig } from '~/core/config';
 import { BookingModal } from '../booking/booking-modal';
 
 /**

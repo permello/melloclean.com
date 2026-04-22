@@ -3,10 +3,10 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'motion/react';
-import { Phone, Mail, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { companyConfig } from '@permello/shared/config';
 import { Button } from '@permello/ui';
-import { companyConfig } from '~/core/config';
+import { ArrowRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { motion } from 'motion/react';
 
 /**
  * Contact section with company info and message form.

@@ -3,12 +3,12 @@
  * Unauthorized use, reproduction, or distribution of this file is strictly prohibited.
  */
 
-import { motion } from 'motion/react';
+import { companyConfig } from '@permello/shared/config';
+import { Heading, Text } from '@permello/ui';
 import { Sparkles } from 'lucide-react';
+import { motion } from 'motion/react';
 import React from 'react';
 import { Link } from 'react-router';
-import { Heading, Text } from '@permello/ui';
-import { companyConfig } from '~/core/config/';
 
 /**
  * Props for the AuthLayout component.
