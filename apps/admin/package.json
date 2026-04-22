@@ -9,6 +9,8 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@permello/shared": "*",
+    "@permello/ui": "*",
     "@react-router/node": "7.14.0",
     "@react-router/serve": "7.14.0",
     "isbot": "^5.1.37",
