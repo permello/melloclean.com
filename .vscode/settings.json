@@ -2,5 +2,8 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always"
+  },
+  "material-icon-theme.folders.associations": {
+    "worker": "tools"
   }
 }
