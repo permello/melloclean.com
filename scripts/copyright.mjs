@@ -28,6 +28,41 @@ import { basename, join } from 'node:path';
 const OLD_COPYRIGHT_RE =
   /^\/\*\*\n \* @copyright[\s\S]*?\*\/\n/;
 
+function loadGitignorePatterns(root) {
+  try {
+    const raw = readFileSync(join(root, '.gitignore'), 'utf-8');
+    return raw
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith('#'));
+  } catch {
+    return [];
+  }
+}
+
+function makeIgnoreFn(patterns) {
+  const dirPatterns = patterns
+    .filter((p) => p.endsWith('/'))
+    .map((p) => p.slice(0, -1));
+
+  const globPatterns = patterns.filter((p) => p.includes('*'));
+  const exactPatterns = patterns.filter((p) => !p.endsWith('/') && !p.includes('*'));
+
+  function matchGlob(pattern, name) {
+    const re = new RegExp('^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+    return re.test(name);
+  }
+
+  return function isIgnored(entryName, isDir) {
+    if (isDir) return dirPatterns.includes(entryName);
+    if (exactPatterns.includes(entryName)) return true;
+    return globPatterns.some((p) => matchGlob(p, entryName));
+  };
+}
+
+const gitignorePatterns = loadGitignorePatterns('.');
+const isIgnored = makeIgnoreFn(gitignorePatterns);
+
 const MIT_HEADER = `/**
  * MIT License
  *
@@ -52,13 +87,14 @@ const MIT_HEADER = `/**
  * SOFTWARE.
  */\n`;
 
-function walk(dir, excludeDirs = []) {
+function walk(dir) {
   const files = [];
   for (const entry of readdirSync(dir)) {
-    if (excludeDirs.includes(entry)) continue;
     const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      files.push(...walk(full, excludeDirs));
+    const isDir = statSync(full).isDirectory();
+    if (isIgnored(entry, isDir)) continue;
+    if (isDir) {
+      files.push(...walk(full));
     } else {
       files.push(full);
     }
@@ -66,20 +102,15 @@ function walk(dir, excludeDirs = []) {
   return files;
 }
 
-const apps = walk('apps')
-  .filter((f) => /\.(ts|tsx)$/.test(f))
-  .filter((f) => !basename(f).includes('config'));
-
-const packages = walk('packages')
-  .filter((f) => /\.(ts|tsx)$/.test(f))
+const allFiles = walk('.')
+  .filter((f) => /\.(js|ts|mjs|tsx)$/.test(f))
   .filter((f) => !basename(f).includes('config'));
 
 let updated = 0;
 let added = 0;
 let skipped = 0;
 
-processFiles(apps);
-processFiles(packages);
+processFiles(allFiles);
 
 console.log(`\nDone: ${updated} replaced, ${added} added, ${skipped} skipped.`);
 

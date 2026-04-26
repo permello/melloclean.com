@@ -21,3 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+const puppeteer = require('puppeteer');
+const path = require('path');
+
+(async () => {
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1280, height: 640, deviceScaleFactor: 2 });
+  await page.goto('file://' + path.resolve(__dirname, 'index.html'), { waitUntil: 'networkidle0' });
+  await page.screenshot({ path: path.join(__dirname, 'banner.png') });
+  await browser.close();
+  console.log('Banner saved to banner/banner.png');
+})();

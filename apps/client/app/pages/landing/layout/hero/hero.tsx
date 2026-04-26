@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-import { motion } from 'motion/react';
-import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
-import { Link } from 'react-router';
 import { Button, Heading, Text } from '@permello/ui';
+import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Link } from 'react-router';
 import { BookingModal } from '../booking/booking-modal';
 
 /**
@@ -42,7 +42,7 @@ export function Hero() {
   ];
 
   return (
-    <section className='relative flex min-h-[90vh] items-center overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50'>
+    <section className='relative flex min-h-screen items-center overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50'>
       {/* Background decorative elements */}
       <div className='absolute top-20 right-10 h-72 w-72 rounded-full bg-emerald-200/30 blur-3xl' />
       <div className='absolute bottom-20 left-10 h-96 w-96 rounded-full bg-teal-200/20 blur-3xl' />
@@ -113,12 +113,14 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className='relative hidden lg:block'
           >
-            <div className='relative'>
+            <div className='relative h-[700px]'>
               <div className='absolute inset-0 rotate-6 rounded-3xl bg-gradient-to-br from-emerald-400 to-teal-400 opacity-20' />
               <img
-                src='https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=700&fit=crop'
+                src='/images/hero-cleaner.png'
                 alt='Professional cleaner'
-                className='relative w-full rounded-3xl object-cover shadow-2xl'
+                className='relative h-full w-full rounded-3xl object-cover shadow-2xl'
+                width={600}
+                height={700}
               />
             </div>
           </motion.div>

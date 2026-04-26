@@ -1,0 +1,7 @@
+{
+  "name": "banner-generator",
+  "private": true,
+  "dependencies": {
+    "puppeteer": "^24.42.0"
+  }
+}

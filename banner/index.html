@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mello Cleaning Services — Banner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1280px;
+      height: 640px;
+      overflow: hidden;
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      background: linear-gradient(135deg, #c8f0d8 0%, #edfaf3 55%, #f5fdf8 100%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+
+    /* ── Top bar: company name + checkmarks ─────────────────── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 56px 20px 56px;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .company-name {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #15803D;
+      line-height: 1;
+    }
+
+    .pills {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 21px;
+      font-weight: 600;
+      color: #15803D;
+    }
+
+    .pill-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #16a34a;
+    }
+
+    .pill-icon svg { display: block; }
+
+    /* ── Bottom: screenshot left + text right ───────────────── */
+    .main-content {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .text-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 0 56px 28px 40px;
+      flex-shrink: 0;
+      width: 500px;
+      z-index: 2;
+    }
+
+    .text-header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tagline {
+      font-size: 28px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .check-icon {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .check-icon svg { display: block; }
+
+    .check-label {
+      font-size: 22px;
+      font-weight: 600;
+      color: #15803D;
+    }
+
+    /* ── Screenshot panel ────────────────────────────────────── */
+    .screenshot-panel {
+      flex-shrink: 0;
+      width: 780px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+
+    .browser-frame {
+      width: 700px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.08),
+        0 40px 100px -20px rgba(0, 0, 0, 0.22),
+        0 20px 50px -10px rgba(0, 0, 0, 0.14),
+        0 0 60px 0 rgba(21, 128, 61, 0.12);
+      transform: perspective(1400px) rotateY(22deg) rotateX(6deg) translateX(60px);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .browser-bar {
+      height: 36px;
+      background: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot.red   { background: #ef4444; }
+    .dot.amber { background: #f59e0b; }
+    .dot.green { background: #22c55e; }
+
+    .url-bar {
+      flex: 1;
+      height: 20px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      margin: 0 10px;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 11px;
+      color: #6b7280;
+      gap: 4px;
+    }
+
+    .url-lock {
+      width: 8px;
+      height: 8px;
+      border: 1.5px solid #9ca3af;
+      border-radius: 2px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .browser-frame img {
+      display: block;
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      object-position: top;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top: company name + checkmarks -->
+  <div class="top-bar">
+    <div class="pills">
+      <div class="pill">
+        <div class="pill-icon">
+          <!-- calendar -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="14" height="13" rx="2"/>
+            <path d="M3 8h14"/>
+            <path d="M7 2v3M13 2v3"/>
+            <path d="M7 12h2M11 12h2M7 15h2"/>
+          </svg>
+        </div>
+        Job Scheduling
+      </div>
+      <div class="pill">
+        <div class="pill-icon">
+          <!-- credit card -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="16" height="11" rx="2"/>
+            <path d="M2 9h16"/>
+            <path d="M6 13h3"/>
+          </svg>
+        </div>
+        Stripe Payments
+      </div>
+      <div class="pill">
+        <div class="pill-icon">
+          <!-- map pin -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2a5 5 0 0 1 5 5c0 3.5-5 11-5 11S5 10.5 5 7a5 5 0 0 1 5-5z"/>
+            <circle cx="10" cy="7" r="1.8" fill="#16a34a" stroke="none"/>
+          </svg>
+        </div>
+        Worker Dispatch
+      </div>
+      <div class="pill">
+        <div class="pill-icon">
+          <!-- user -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="10" cy="6" r="3.2"/>
+            <path d="M3 17c0-3.3 3.1-6 7-6s7 2.7 7 6"/>
+          </svg>
+        </div>
+        Client Management
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: screenshot left, text right -->
+  <div class="main-content">
+    <div class="screenshot-panel">
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="dot red"></div>
+          <div class="dot amber"></div>
+          <div class="dot green"></div>
+          <div class="url-bar">
+            <div class="url-lock"></div>
+            www.melloclean.com
+          </div>
+        </div>
+        <img src="website-screenshot.png" alt="Mello Cleaning Services website" />
+      </div>
+    </div>
+
+    <div class="text-panel">
+      <div class="text-header">
+        <div class="company-name">melloclean.com</div>
+        <p class="tagline">
+          Everything your cleaning business needs to run smoothly — all from one self&#8209;hosted platform.
+        </p>
+      </div>
+
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="#16a34a" stroke="#16a34a"/><path d="m9 12 2 2 4-4" stroke="white"/></svg>
+          </div>
+          <span class="check-label">Payments &amp; Invoicing via Stripe</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="#16a34a" stroke="#16a34a"/><path d="m9 12 2 2 4-4" stroke="white"/></svg>
+          </div>
+          <span class="check-label">Notifications with Email &amp; SMS Alerts</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="#16a34a" stroke="#16a34a"/><path d="m9 12 2 2 4-4" stroke="white"/></svg>
+          </div>
+          <span class="check-label">Client &amp; Worker Portals</span>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="#16a34a" stroke="#16a34a"/><path d="m9 12 2 2 4-4" stroke="white"/></svg>
+          </div>
+          <span class="check-label">Role-Based Access Control</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
