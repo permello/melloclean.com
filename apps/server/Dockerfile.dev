@@ -1,0 +1,7 @@
+# Use an official lightweight Node.js image.
+FROM node:20-alpine
+WORKDIR /api
+COPY package*.json ./
+COPY apps/server/package*.json ./apps/server/
+RUN npm install
+CMD ["npm", "run", "dev", "--", "--filter=@permello/server"]

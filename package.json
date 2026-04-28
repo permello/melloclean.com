@@ -22,10 +22,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:dock": "docker-compose -f docker-compose.yml up --no-recreate -d",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "docker:rebuild": "turbo run docker:rebuild --output-logs=new-only",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
     "copyright": "node scripts/copyright.mjs"
   },

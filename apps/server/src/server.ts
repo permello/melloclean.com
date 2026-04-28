@@ -21,3 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import app from './app';
+import config from './config/config';
+
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
+});
