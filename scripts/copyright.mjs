@@ -104,7 +104,7 @@ function walk(dir) {
 
 const allFiles = walk('.')
   .filter((f) => /\.(js|ts|mjs|tsx)$/.test(f))
-  .filter((f) => !basename(f).includes('config'));
+  .filter((f) => !/\.config\.(js|ts|mjs|cjs)$/.test(basename(f)));
 
 let updated = 0;
 let added = 0;
