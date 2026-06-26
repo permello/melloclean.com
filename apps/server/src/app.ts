@@ -28,8 +28,8 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-  res.send('Hello World!');
+app.get('/health', (req: Request, res: Response, next: NextFunction) => {
+  res.send('ok!');
 });
 
 export default app;
