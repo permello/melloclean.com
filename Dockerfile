@@ -31,6 +31,8 @@ RUN npm run build --workspace=apps/dashboard
 
 # server builder
 FROM dependencies AS server-builder
+COPY tsconfig.base.json ./
+COPY packages/ ./packages/
 COPY apps/server/ ./apps/server/
 RUN npm run build --workspace=apps/server
 
@@ -39,10 +41,8 @@ FROM node:24-alpine AS client-production
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 COPY --from=client-builder /monorepo/apps/client/build ./build
-RUN --mount=type=cache,target=/root/.npm \
-    echo '{"dependencies":{"@react-router/serve":"7.14.0"}}' > package.json && \
-    npm install --omit=dev && \
-    chown -R app:app /app
+COPY --from=client-builder /monorepo/node_modules ./node_modules
+RUN chown -R app:app /app
 USER app
 EXPOSE 3000
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
@@ -52,10 +52,8 @@ FROM node:24-alpine AS dashboard-production
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 COPY --from=dashboard-builder /monorepo/apps/dashboard/build ./build
-RUN --mount=type=cache,target=/root/.npm \
-    echo '{"dependencies":{"@react-router/serve":"7.14.0"}}' > package.json && \
-    npm install --omit=dev && \
-    chown -R app:app /app
+COPY --from=dashboard-builder /monorepo/node_modules ./node_modules
+RUN chown -R app:app /app
 USER app
 EXPOSE 3001
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
@@ -65,10 +63,8 @@ FROM node:24-alpine AS server-production
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 COPY --from=server-builder /monorepo/apps/server/build ./build
-RUN --mount=type=cache,target=/root/.npm \
-    echo '{"dependencies":{"express":"^4.22.1","dotenv":"^17.4.2"}}' > package.json && \
-    npm install --omit=dev && \
-    chown -R app:app /app
+COPY --from=server-builder /monorepo/node_modules ./node_modules
+RUN chown -R app:app /app
 USER app
 EXPOSE 5000
 CMD ["node", "build/src/server.js"]
