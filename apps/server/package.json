@@ -7,11 +7,13 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
     "lint": "eslint 'src/**/*.ts'"
   },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.0.1",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2"
   }
