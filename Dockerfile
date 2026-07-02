@@ -4,67 +4,80 @@
 FROM node:24-alpine AS base
 WORKDIR /monorepo
 
-# dependencies
-FROM base AS dependencies
-COPY package.json package-lock.json ./
-COPY apps/client/package.json ./apps/client/
-COPY apps/dashboard/package.json ./apps/dashboard/
-COPY apps/server/package.json ./apps/server/
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/ui/package.json ./packages/ui/
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+# pruner — single COPY . ., three turbo prune outputs
+FROM base AS pruner
+RUN npm install -g turbo@^2
+COPY . .
+RUN turbo prune @permello/client    --docker --out-dir out/client
+RUN turbo prune @permello/dashboard --docker --out-dir out/dashboard
+RUN turbo prune @permello/server    --docker --out-dir out/server
 
 # client builder
-FROM dependencies AS client-builder
-COPY tsconfig.base.json ./
-COPY packages/ ./packages/
-COPY apps/client/ ./apps/client/
+FROM base AS client-builder
+COPY --from=pruner /monorepo/out/client/json/ .
+COPY --from=pruner /monorepo/out/client/package-lock.json ./package-lock.json
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+COPY --from=pruner /monorepo/out/client/full/ .
+COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/client
 
 # dashboard builder
-FROM dependencies AS dashboard-builder
-COPY tsconfig.base.json ./
-COPY packages/ ./packages/
-COPY apps/dashboard/ ./apps/dashboard/
+FROM base AS dashboard-builder
+COPY --from=pruner /monorepo/out/dashboard/json/ .
+COPY --from=pruner /monorepo/out/dashboard/package-lock.json ./package-lock.json
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+COPY --from=pruner /monorepo/out/dashboard/full/ .
+COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/dashboard
 
 # server builder
-FROM dependencies AS server-builder
-COPY tsconfig.base.json ./
-COPY packages/ ./packages/
-COPY apps/server/ ./apps/server/
+FROM base AS server-builder
+COPY --from=pruner /monorepo/out/server/json/ .
+COPY --from=pruner /monorepo/out/server/package-lock.json ./package-lock.json
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+COPY --from=pruner /monorepo/out/server/full/ .
+COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/server
 
 # client production
 FROM node:24-alpine AS client-production
 WORKDIR /app
-RUN addgroup -S app && adduser -S app -G app
-COPY --from=client-builder /monorepo/apps/client/build ./build
-COPY --from=client-builder /monorepo/node_modules ./node_modules
-RUN chown -R app:app /app
+
+RUN addgroup --system --gid 1001 app
+RUN adduser --system --uid 1001 app
 USER app
+
+COPY --from=client-builder --chown=app:app /monorepo/apps/client/build ./build
+COPY --from=client-builder --chown=app:app /monorepo/node_modules ./node_modules
+
 EXPOSE 3000
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
 
 # dashboard production
 FROM node:24-alpine AS dashboard-production
 WORKDIR /app
-RUN addgroup -S app && adduser -S app -G app
-COPY --from=dashboard-builder /monorepo/apps/dashboard/build ./build
-COPY --from=dashboard-builder /monorepo/node_modules ./node_modules
-RUN chown -R app:app /app
+RUN addgroup --system --gid 1001 app
+RUN adduser --system --uid 1001 app
 USER app
+COPY --from=dashboard-builder --chown=app:app /monorepo/apps/dashboard/build ./build
+COPY --from=dashboard-builder --chown=app:app /monorepo/node_modules ./node_modules
+
 EXPOSE 3001
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
 
 # server production
 FROM node:24-alpine AS server-production
 WORKDIR /app
-RUN addgroup -S app && adduser -S app -G app
-COPY --from=server-builder /monorepo/apps/server/build ./build
-COPY --from=server-builder /monorepo/node_modules ./node_modules
-RUN chown -R app:app /app
+RUN addgroup --system --gid 1001 app
+RUN adduser --system --uid 1001 app
 USER app
+
+COPY --from=server-builder --chown=app:app /monorepo/apps/server/build ./build
+COPY --from=server-builder --chown=app:app /monorepo/node_modules ./node_modules
+
+
 EXPOSE 5000
 CMD ["node", "build/src/server.js"]
