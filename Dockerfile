@@ -21,6 +21,8 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY --from=pruner /monorepo/out/client/full/ .
 COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/client
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 
 # dashboard builder
 FROM base AS dashboard-builder
@@ -31,6 +33,8 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY --from=pruner /monorepo/out/dashboard/full/ .
 COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/dashboard
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 
 # server builder
 FROM base AS server-builder
@@ -41,6 +45,8 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY --from=pruner /monorepo/out/server/full/ .
 COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
 RUN npm run build --workspace=apps/server
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 
 # client production
 FROM node:24-alpine AS client-production
