@@ -4,6 +4,22 @@
 FROM node:24-alpine AS base
 WORKDIR /monorepo
 
+# development
+FROM base AS development
+
+COPY package.json package-lock.json ./
+COPY apps/client/package.json apps/client/package.json
+COPY apps/dashboard/package.json apps/dashboard/package.json
+COPY apps/server/package.json apps/server/package.json
+COPY packages/shared/package.json packages/shared/package.json
+COPY packages/ui/package.json packages/ui/package.json
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+
+EXPOSE 3000 3001 5000
+CMD ["npm", "run", "dev"]
+
 # pruner — single COPY . ., three turbo prune outputs
 FROM base AS pruner
 RUN npm install -g turbo@^2
