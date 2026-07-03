@@ -28,8 +28,12 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.get('/health', (req: Request, res: Response, next: NextFunction) => {
+const router = express.Router();
+
+router.get('/health', (req: Request, res: Response, next: NextFunction) => {
   res.send('ok!');
 });
+
+app.use('/api', router);
 
 export default app;

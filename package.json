@@ -22,8 +22,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
-    "dev:dock": "docker-compose -f docker-compose.yml --profile dev up --no-recreate -d",
-    "prod:dock": "docker-compose -f docker-compose.yml --profile prod up --no-recreate -d",
+    "dev:start": "docker-compose -f docker-compose.yml --profile dev up --no-recreate -d",
+    "dev:stop": "docker compose --profile dev down -v",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
