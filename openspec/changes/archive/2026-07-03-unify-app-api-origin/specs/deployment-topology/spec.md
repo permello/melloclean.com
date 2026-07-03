@@ -1,5 +1,20 @@
 ## MODIFIED Requirements
 
+### Requirement: Profile-selected Compose topology
+The system SHALL provide a single `docker-compose.yml` defining both a `dev` and a `prod` Compose profile, with the `dev` profile exposed to developers via root `package.json` scripts `dev:start` and `dev:stop`, such that running `npm run dev:start` brings up only the development topology and `npm run dev:stop` tears it down. The `prod` profile SHALL be started via a direct `docker compose --profile prod up` invocation, with no `package.json` script wrapping it.
+
+#### Scenario: Starting the dev profile
+- **WHEN** an operator runs `npm run dev:start`
+- **THEN** the `client-dev`, `dashboard-dev`, `server-dev`, and `nginx-dev` services start, and no `prod`-only service starts
+
+#### Scenario: Stopping the dev profile
+- **WHEN** an operator runs `npm run dev:stop`
+- **THEN** the dev profile's services and volumes are stopped and removed
+
+#### Scenario: Starting the prod profile
+- **WHEN** an operator runs `docker compose --profile prod up`
+- **THEN** the `client`, `dashboard`, `server`, and `nginx-prod` services start, and no `dev`-only service starts
+
 ### Requirement: Nginx subdomain routing per profile
 Each profile SHALL have its own nginx service and configuration file, routing nip.io-style subdomains to that profile's app services by their profile-specific service names. The `app.` subdomain SHALL route both the dashboard's root path and the `/api/` path prefix to their respective services; no separate `api.` subdomain SHALL exist.
 
