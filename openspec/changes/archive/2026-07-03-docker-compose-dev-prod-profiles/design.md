@@ -2,21 +2,22 @@
 
 The root `Dockerfile` already defines the build-time half of this: a shared `development` stage (CMD `npm run dev`, i.e. `turbo run dev` across all three apps) and three independent production stages (`client-production`, `dashboard-production`, `server-production`) built via `turbo prune @permello/<app> --docker`. `nginx/nginx.dev.conf` already exists and proxies `www/app/api.127.0.0.1.nip.io` to `client:3000` / `dashboard:3001` / `server:5000`. `docker-compose.yml` is currently empty — it previously described an older `db` / `backend` / `frontend` topology that predates the turborepo restructure and is not being resurrected.
 
-This design covers only the Compose/orchestration layer: which services exist, how `profiles` select between them, and how nginx routes to each. It does not change the Dockerfile's stages or the apps' code.
+This design covers only the Compose/orchestration layer: which services exist, how `profiles` select between them, and how nginx routes to each. It does not change the Dockerfile's stages or the apps' code. It also does not cover Appwrite itself — Appwrite runs outside this repo entirely (Appwrite Cloud for dev, a self-hosted instance on a separate VPS for prod), and this design only covers how `server`/`server-dev` are configured with env vars to reach it.
 
 ## Goals / Non-Goals
 
 **Goals:**
 - One `docker-compose.yml` that can bring up a full dev topology or a full prod topology via `docker compose --profile dev|prod up`.
 - Dev topology structurally mirrors prod: three separate app containers, not one shared container running all three apps' dev servers.
-- `db` is shared infrastructure, always available regardless of which profile is selected.
+- `server`/`server-dev` are configured to reach Appwrite as an external HTTP dependency via env vars, without any Appwrite container existing in this compose file.
 - Dev containers support hot reload without rebuilding the image.
 
 **Non-Goals:**
 - TLS/certificate handling for real production domains — `nginx-prod` establishes routing only; certs are a separate future change.
 - Changing the Dockerfile's stages, build args, or per-app build logic.
 - CI/CD wiring (e.g. which profile a deploy pipeline invokes) — out of scope for this change.
-- Production secrets management — `.env` / `.env.example` usage stays as-is.
+- Production secrets management — `.env` / `.env.example` usage stays as-is (now also carrying Appwrite credentials).
+- Provisioning, deploying, or managing the self-hosted Appwrite VPS, or its TLS — out of scope; this design only covers how `server` is configured with an endpoint/credentials to reach it, wherever it lives.
 
 ## Decisions
 
@@ -32,7 +33,9 @@ This keeps the same image/target for all three dev services (only `command:` dif
 
 **Separate service names per profile (`client-dev` vs `client`), not shared names.** A Compose file cannot define the same service key twice, so mirroring prod's names in dev is not possible without a suffix. `-dev` suffix was chosen for clarity in `docker compose ps` output and logs. This is called out as an open naming question in the proposal since it hasn't been fully settled.
 
-**`db` has no `profiles:` key.** Compose starts services with no `profiles` entry regardless of which `--profile` flag is passed. Since Postgres access is needed identically in dev and prod-local-testing, giving it no profile restriction avoids duplicating a `db` service per profile.
+**Appwrite is never a container in this compose file.** Self-hosting Appwrite's official stack (~15 containers: api, realtime, workers, mariadb, redis, influxdb...) was considered and rejected for local dev: Appwrite's own docs recommend 4GB RAM as a minimum, which doesn't leave enough headroom alongside the three dev app containers, Docker/WSL2 overhead, and normal desktop use on an 8GB dev machine. Instead: dev points `server-dev` at Appwrite Cloud (managed SaaS, zero local footprint); prod points `server` at a self-hosted Appwrite instance running on a separate VPS, entirely outside this repo's compose topology. Both are consumed purely as external HTTP dependencies.
+
+**Same env var names for both profiles, resolved by whichever `.env` is active.** `APPWRITE_ENDPOINT` / `APPWRITE_PROJECT_ID` / `APPWRITE_API_KEY` are not environment-suffixed (no `_DEV`/`_PROD` split) — this matches the existing flat `.env`/`.env.example` pattern already used for `POSTGRES_*`. A developer's local `.env` holds Appwrite Cloud values; the prod host's `.env` holds the self-hosted VPS's values. The trade-off: only one set of values can be active at a time (see Risks).
 
 **Two nginx services, two conf files.** `nginx-dev` mounts `nginx/nginx.dev.conf` (updated to point at `-dev`-suffixed upstreams); `nginx-prod` mounts a new `nginx/nginx.prod.conf` (points at the unsuffixed prod service names). Both listen on port 80 but are never running simultaneously since only one profile is active at a time. Keeping them as separate files (rather than one parameterized template) matches the reality that dev and prod nginx configs tend to diverge further over time anyway (TLS, security headers, caching) — better to let them fork cleanly now than build indirection for a hypothetical shared template.
 
@@ -48,16 +51,21 @@ This keeps the same image/target for all three dev services (only `command:` dif
 
 [No TLS story yet for `nginx-prod`] → Explicitly a non-goal here; real production deployment will need a follow-up change before this topology is internet-facing.
 
+[Dev (Appwrite Cloud) and prod (self-hosted Appwrite on a VPS) are two different Appwrite instances/versions] → Behavior can drift between environments (version differences, Cloud-specific quotas/limits) in a way that pure-Docker services didn't have; accepted since VPS provisioning and cloud/self-hosted parity are out of scope for this change.
+
+[Local `--profile prod up` smoke testing needs the VPS's Appwrite values in `.env`, not Cloud's] → Since env var names aren't environment-suffixed, a developer switching from dev to a local prod smoke-test needs to manually swap `.env` values; accepted as a minor manual step rather than adding suffixed variables.
+
 ## Migration Plan
 
 1. Write `docker-compose.yml` from scratch (no existing working file to migrate from — previous version is already deleted and structurally obsolete).
 2. Update `nginx/nginx.dev.conf` upstream hostnames.
 3. Add `nginx/nginx.prod.conf`.
-4. Validate `dev` profile locally: `docker compose --profile dev up`, confirm all three nip.io subdomains reach their app with live-reload working.
-5. Validate `prod` profile locally: `docker compose --profile prod up`, confirm all three subdomains reach the built production apps.
-6. Update `package.json`'s `dev:dock` script (and add a `prod:dock` equivalent) to pass the correct `--profile` flag.
+4. Update `.env.example`: remove `POSTGRES_*`, add `APPWRITE_ENDPOINT` / `APPWRITE_PROJECT_ID` / `APPWRITE_API_KEY`.
+5. Validate `dev` profile locally: `docker compose --profile dev up`, confirm all three nip.io subdomains reach their app with live-reload working, and `server-dev` can reach Appwrite Cloud using the configured credentials.
+6. Validate `prod` profile locally: `docker compose --profile prod up` (with `.env` pointed at the VPS), confirm all three subdomains reach the built production apps and `server` can reach the self-hosted Appwrite instance.
+7. Update `package.json`'s `dev:dock` script (and add a `prod:dock` equivalent) to pass the correct `--profile` flag.
 
-No rollback concerns beyond reverting the file changes — no persisted data migration involved (the `db` named volume is new, not a migration of existing data).
+No rollback concerns beyond reverting the file changes — no persisted data migration involved (there is no database service or volume in this topology).
 
 ## Open Questions
 
