@@ -6,7 +6,7 @@
     "packages/*",
     "apps/*"
   ],
-  "packageManager": "npm@11.12.1",
+  "packageManager": "npm@11.18.0",
   "description": "A responsive and modern website built for my cleaning business",
   "homepage": "https://github.com/permello/melloclean.com#readme",
   "bugs": {
@@ -22,16 +22,21 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:start": "docker-compose -f docker-compose.yml --profile dev up --no-recreate -d",
+    "dev:stop": "docker compose --profile dev down -v",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "docker:rebuild": "turbo run docker:rebuild --output-logs=new-only",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
-    "copyright": "node scripts/copyright.mjs"
+    "copyright": "node scripts/copyright.mjs",
+    "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} +",
+    "refresh": "npm run clean ; find . -name 'package-lock.json' -delete ; ncu --workspaces --root -u && npm install"
   },
   "devDependencies": {
-    "turbo": "^2.9.6",
-    "typescript": "^5.9.3",
-    "prettier": "^3.8.1"
+    "turbo": "^2.10.2",
+    "typescript": "^6.0.3",
+    "prettier": "^3.9.4"
   }
 }

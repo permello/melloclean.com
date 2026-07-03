@@ -24,7 +24,8 @@
 
 import { companyConfig } from '@permello/shared/config';
 import { Heading } from '@permello/ui';
-import { Facebook, Instagram, Sparkles, Twitter } from 'lucide-react';
+import { FaFacebook as Facebook, FaInstagram as Instagram, FaXTwitter as Twitter } from 'react-icons/fa6';
+import { Sparkles } from 'lucide-react';
 
 /**
  * Site footer with company info, navigation links, and social media.

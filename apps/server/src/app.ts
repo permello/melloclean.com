@@ -21,3 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import type { NextFunction, Request, Response } from 'express';
+import express from 'express';
+const app = express();
+
+app.use(express.json());
+
+// Routes
+const router = express.Router();
+
+router.get('/health', (req: Request, res: Response, next: NextFunction) => {
+  res.send('ok!');
+});
+
+app.use('/api', router);
+
+export default app;

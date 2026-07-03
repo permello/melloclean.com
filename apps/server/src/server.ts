@@ -21,28 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import app from './app';
+import config from './config/config';
 
-import companyData from './company.json';
-
-/**
- * Configuration interface for company information.
- */
-export interface CompanyConfig {
-  /** Company email address */
-  Email: string;
-  /** Company physical address */
-  Address: string;
-  /** Business operating hours */
-  Hours: string;
-  /** Company phone number */
-  Phone: string;
-  /** Company name */
-  Name: string;
-}
-
-/**
- * Company configuration containing business contact details.
- */
-const companyConfig: CompanyConfig = companyData;
-
-export { companyConfig };
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
+});

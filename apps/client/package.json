@@ -6,29 +6,31 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "docker:rebuild": "docker compose build --no-cache client && docker compose up -d client"
   },
   "dependencies": {
     "@permello/shared": "*",
     "@permello/ui": "*",
-    "@react-router/node": "7.14.0",
-    "@react-router/serve": "7.14.0",
-    "isbot": "^5.1.37",
-    "lucide-react": "^0.577.0",
-    "motion": "^12.38.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-router": "7.14.0"
+    "@react-router/node": "8.1.0",
+    "@react-router/serve": "8.1.0",
+    "isbot": "^5.1.44",
+    "lucide-react": "^1.23.0",
+    "motion": "^12.42.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-icons": "^5.7.0",
+    "react-router": "8.1.0"
   },
   "devDependencies": {
-    "@react-router/dev": "7.14.0",
-    "@tailwindcss/vite": "^4.2.2",
-    "@types/node": "^22",
-    "@types/react": "^19.2.14",
+    "@react-router/dev": "8.1.0",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^26",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "prettier": "^3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "tailwindcss": "^4.2.2",
-    "vite": "^8.0.2"
+    "prettier": "^3.9.4",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "tailwindcss": "^4.3.2",
+    "vite": "^8.1.3"
   }
 }

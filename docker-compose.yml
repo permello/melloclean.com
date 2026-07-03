@@ -1,34 +1,101 @@
+networks:
+  public-net: {}
+  app-net: {}
+
 services:
-  db:
-    image: postgres:17-alpine
-    ports:
-      - '5432:5432'
+  # --- prod profile ---
+  client:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: client-production
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      PORT: 3000
+    restart: unless-stopped
+    networks: [public-net]
+
+  dashboard:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: dashboard-production
+    environment:
+      PORT: 3001
+    restart: unless-stopped
+    networks: [app-net]
+
+  server:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: server-production
+    environment:
+      APPWRITE_ENDPOINT: ${APPWRITE_ENDPOINT}
+      APPWRITE_PROJECT_ID: ${APPWRITE_PROJECT_ID}
+      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+    restart: unless-stopped
+    networks: [app-net]
+
+  nginx-prod:
+    profiles: ["prod"]
+    image: nginx:alpine
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - client
+      - dashboard
+      - server
+    ports:
+      - "80:80"
+    networks: [public-net, app-net]
 
-  backend:
+  # --- dev profile ---
+  client-dev:
+    profiles: ["dev"]
     build:
       context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - '5000:5000'
-    env_file:
-      - backend/.env
-    depends_on:
-      - db
+      target: development
+    command: npx turbo run dev --filter=@permello/client
+    volumes:
+      - .:/monorepo
+      - /monorepo/node_modules
+    networks: [public-net]
 
-  frontend:
+  dashboard-dev:
+    profiles: ["dev"]
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    depends_on:
-      - backend
+      target: development
+    command: npx turbo run dev --filter=@permello/dashboard
+    volumes:
+      - .:/monorepo
+      - /monorepo/node_modules
+    networks: [app-net]
 
-volumes:
-  pgdata:
+  server-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: development
+    command: npx turbo run dev --filter=@permello/server
+    volumes:
+      - .:/monorepo
+      - /monorepo/node_modules
+    environment:
+      APPWRITE_ENDPOINT: ${APPWRITE_ENDPOINT}
+      APPWRITE_PROJECT_ID: ${APPWRITE_PROJECT_ID}
+      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+    networks: [app-net]
+
+  nginx-dev:
+    profiles: ["dev"]
+    image: nginx:alpine
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - client-dev
+      - dashboard-dev
+      - server-dev
+    ports:
+      - "80:80"
+    networks: [public-net, app-net]

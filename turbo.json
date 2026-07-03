@@ -17,6 +17,9 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "docker:rebuild": {
+      "cache": false
     }
   }
 }

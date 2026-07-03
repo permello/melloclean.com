@@ -1,0 +1,21 @@
+# dev artifacts
+**/.git
+**/node_modules
+**/.react-router
+**/build
+**/dist
+
+# docs / tools
+README.md
+banner/
+nginx/
+scripts/
+*.md
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# editor
+.vscode/
