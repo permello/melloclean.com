@@ -23,15 +23,23 @@
  */
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import config from './config/config';
+
 const app = express();
 
+app.use(helmet());
+app.use(cors({ origin: config.corsOrigins, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 const router = express.Router();
 
 router.get('/health', (req: Request, res: Response, next: NextFunction) => {
-  res.send('ok!');
+  res.json({ status: 'ok' });
 });
 
 app.use('/api', router);

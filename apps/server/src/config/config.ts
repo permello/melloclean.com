@@ -28,11 +28,16 @@ dotenv.config();
 interface Config {
   port: number;
   nodeEnv: string;
+  corsOrigins: string[];
 }
 
 const config: Config = {
   port: Number(process.env.PORT) || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
+  corsOrigins: (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 };
 
 export default config;
