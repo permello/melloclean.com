@@ -10,7 +10,7 @@ The server SHALL mount all of its HTTP routes under a `/api` path prefix, so tha
 
 #### Scenario: Health check is served under /api
 - **WHEN** a request is made to `/api/health` on the server
-- **THEN** the server responds with its health check response
+- **THEN** the server responds with HTTP 200 and a JSON body `{ "status": "ok" }`
 
 #### Scenario: Bare root is not a route
 - **WHEN** a request is made to `/health` (without the `/api` prefix) directly on the server
