@@ -3,11 +3,14 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./types/api": "./types/api.ts",
+    "./types/authSchema": "./types/authSchema.ts",
     "./config": "./config/index.ts",
     "./css/base.css": "./css/base.css"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
   }
 }
