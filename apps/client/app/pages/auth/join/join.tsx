@@ -37,13 +37,13 @@ import type { ActionData, SignupFormData } from './ts/types';
 const signUpStages: WizardStageConfig[] = [ACCOUNT_CONFIG, ADDRESS_CONFIG];
 
 /**
- * Server action to handle signup form submission.
+ * Client action to handle signup form submission.
  * Processes the completed wizard form data.
  *
- * @param args - Route action arguments
+ * @param args - Route client action arguments
  * @returns Action response with success status
  */
-export async function action({ request }: Route.ActionArgs): Promise<ActionData> {
+export async function clientAction({ request }: Route.ClientActionArgs): Promise<ActionData> {
   const formData = await request.formData();
   const data = Object.fromEntries(formData.entries()) as SignupFormData;
 

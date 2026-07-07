@@ -41,13 +41,13 @@ interface ActionData {
 }
 
 /**
- * Server action to handle login form submission.
+ * Client action to handle login form submission.
  * Validates email and password fields.
  *
- * @param args - Route action arguments
+ * @param args - Route client action arguments
  * @returns Action response with errors or success status
  */
-export async function action({ request }: Route.ActionArgs): Promise<ActionData> {
+export async function clientAction({ request }: Route.ClientActionArgs): Promise<ActionData> {
   const formData = await request.formData();
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
