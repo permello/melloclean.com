@@ -32,12 +32,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npx turbo run build --filter=@permello/client
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build/client
+          path: apps/client/build/client
 
   deploy:
     name: Deploy
