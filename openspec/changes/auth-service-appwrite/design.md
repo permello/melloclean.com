@@ -48,6 +48,32 @@ It is built from exactly two calls against the session-scoped client: `account.g
 **A failed or expired token causes `validateSession` to reject; `requireAuth` catches and returns 401.**
 Both `account.get()` and `teams.list()` throw on an invalid/expired session when called against a session-scoped client presenting that token. `requireAuth` treats any rejection from `validateSession` (missing cookie, expired token, revoked session) uniformly as a 401 — it does not distinguish error causes in the response.
 
+**`AppwriteAuthService`'s constructor accepts an injected `SessionClientFactory`, not a pre-built `Client`.**
+```
+type SessionClientFactory = (token: string) => { account: Account; teams: Teams };
+```
+Each call to `validateSession`/`logout` obtains its `Account`/`Teams` pair from this factory rather than the service building a `node-appwrite` `Client` internally. This resolves the design's original open question in favor of injection — and not just for testability. Reading `node_modules/node-appwrite/dist/client.js` confirms `Client.setSession()` mutates a shared `headers` object in place rather than returning a new instance. A single long-lived `Client` shared across concurrent requests would let one request's `setSession(token)` call overwrite another's mid-flight, since the header mutation and the async HTTP call it feeds land on different ticks of the event loop — a real cross-user identity risk in a multi-request Express server, not a theoretical one. The factory signature `(token) => { account, teams }` makes "build fresh, never reuse" the only shape possible, rather than an unenforced convention. The real implementation, `buildSessionClients`, lives in `apps/server/src/config/appwrite.ts`, built once from global config (`APPWRITE_ENDPOINT`, `APPWRITE_PROJECT_ID`) but constructing a new `Client` on every invocation. Alternative considered: building the `Client` internally from env vars (the original shape) — rejected once the shared-mutable-state risk above was found, since it would otherwise rely on every future maintainer remembering never to cache that internal client.
+
+**`AppwriteAuthService` itself is a singleton, constructed exactly once in `apps/server/src/services/authServiceInstance.ts`.**
+```
+export const authService: AuthService = new AppwriteAuthService(buildSessionClients);
+```
+No other production module calls `new AppwriteAuthService(...)`. It's exported typed as the `AuthService` interface, not the concrete class, so every consumer — `requireAuth`, `requireTeam`, and any future route — only ever sees the two-method interface, keeping Appwrite specifics behind the seam even at the singleton boundary. This is a genuine singleton, not just a naming convention: Node's module cache guarantees `services/authServiceInstance.ts`'s top-level code runs exactly once regardless of how many files import it, so every `import { authService } from '../services/authServiceInstance'` resolves to the same object reference.
+
+**`requireAuth`/`requireTeam` import the `authService` singleton directly rather than receiving it as a constructor/factory argument.**
+This matches the existing convention already used for `config.ts` (`app.ts` does `import config from './config/config'`), rather than introducing a new DI pattern at the middleware layer. Alternative considered: middleware factories taking `AuthService` as a parameter (`requireAuth(authService)`), mirroring `AppwriteAuthService`'s own constructor injection — rejected in favor of consistency with the rest of the codebase's singleton-import style. The trade-off: middleware tests need `vi.mock('../services/authServiceInstance', ...)` to substitute a fake, rather than passing a fake directly — but since the mocked module is a small local file exporting a plain object (not a third-party SDK class), this is a much lighter form of module mocking than internal client-building inside `AppwriteAuthService` would have required.
+
+## Testing Strategy
+
+Test runner: **vitest**, matching the existing `packages/ui` convention. `apps/server` has no test runner today — this change adds one (`vitest.config.ts`, `vitest` devDependency, `"test": "vitest run"` script).
+
+Per unit:
+- **`AppwriteAuthService`**: unit tests instantiate `new AppwriteAuthService(fakeFactory)` directly, where `fakeFactory` returns plain objects with `vi.fn()` stubs for `account.get`, `account.deleteSession`, and `teams.list`. No `vi.mock()` of `node-appwrite` anywhere — the injected-factory design means the class itself never imports the SDK's `Account`/`Teams` classes in a way tests need to intercept.
+- **`requireAuth` / `requireTeam`**: tests use `vi.mock('../services/authServiceInstance', () => ({ authService: { validateSession: vi.fn(), logout: vi.fn() } }))`, since these middleware import the singleton directly (see Decisions above) rather than taking it as a parameter.
+- **Routes**: out of scope for this change (tracked under #74) — no route-level or `supertest` tests belong here.
+
+Workflow is TDD: for each unit, the failing test is written and manually reviewed before the corresponding implementation task begins. `tasks.md` reflects this ordering.
+
 ## Risks / Trade-offs
 
 - **[Risk]** `validateSession` makes two Appwrite calls (`account.get()` + `teams.list()`) on every authenticated request, with no caching → **Mitigation**: acceptable for now; this is still fewer calls than the original design (which added a third for `getUserTeams`). Revisit only if latency becomes a measured problem.
@@ -57,14 +83,14 @@ Both `account.get()` and `teams.list()` throw on an invalid/expired session when
 ## Migration Plan
 
 No existing code implements `AuthService` today, so there is no migration of callers. Steps:
-1. Add `AuthService` interface and `AppwriteAuthService` implementation.
-2. Add `requireAuth` and `requireTeam` middleware.
-3. Register `AppwriteAuthService` at startup in `app.ts`.
-4. Add the three Appwrite env vars to `.env.example`.
+1. Add `AuthService` interface.
+2. Add `config/appwrite.ts` (`buildSessionClients` factory) and `AppwriteAuthService` implementation (constructor-injected with that factory).
+3. Add `services/authServiceInstance.ts`, the sole `new AppwriteAuthService(buildSessionClients)` instantiation, exported as the `authService` singleton.
+4. Add `requireAuth` and `requireTeam` middleware, importing `{ authService }` directly.
+5. Add the three Appwrite env vars to `.env.example` (already present).
 
 Rollback: revert the commit — nothing currently depends on this service, so rollback has no downstream impact.
 
 ## Open Questions
 
-- Should `AppwriteAuthService`'s constructor accept a pre-built `node-appwrite` `Client`, or build its own from env vars internally? (Affects testability — a passed-in client is easier to mock.) Left to implementation; either satisfies this design.
 - Where does the future API-key-scoped work (#126, possible server-side signup) live — on `AuthService` itself, or a separate `AdminAuthService`? Issue #77's own comments leave this open; not decided by this change.

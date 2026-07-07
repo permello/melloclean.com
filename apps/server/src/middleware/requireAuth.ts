@@ -21,27 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import dotenv from 'dotenv';
+import type { NextFunction, Request, Response } from 'express';
+import { authService } from '../services/authServiceInstance';
+import type { AuthUser } from '../services/AuthService';
 
-dotenv.config();
+const SESSION_COOKIE_NAME = 'session';
 
-interface Config {
-  port: number;
-  nodeEnv: string;
-  corsOrigins: string[];
-  appwriteEndpoint: string;
-  appwriteProjectId: string;
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: AuthUser;
+    }
+  }
 }
 
-const config: Config = {
-  port: Number(process.env.PORT) || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  appwriteEndpoint: process.env.APPWRITE_ENDPOINT || '',
-  appwriteProjectId: process.env.APPWRITE_PROJECT_ID || '',
-};
+export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+  const token = req.cookies?.[SESSION_COOKIE_NAME];
 
-export default config;
+  if (!token) {
+    res.sendStatus(401);
+    return;
+  }
+
+  try {
+    req.user = await authService.validateSession(token);
+  } catch {
+    res.sendStatus(401);
+    return;
+  }
+
+  next();
+}

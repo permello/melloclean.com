@@ -21,27 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import dotenv from 'dotenv';
+import { Account, Client, Teams } from 'node-appwrite';
+import config from './config';
 
-dotenv.config();
+export type SessionClientFactory = (token: string) => { account: Account; teams: Teams };
 
-interface Config {
-  port: number;
-  nodeEnv: string;
-  corsOrigins: string[];
-  appwriteEndpoint: string;
-  appwriteProjectId: string;
-}
+export const buildSessionClients: SessionClientFactory = (token: string) => {
+  const client = new Client()
+    .setEndpoint(config.appwriteEndpoint)
+    .setProject(config.appwriteProjectId)
+    .setSession(token);
 
-const config: Config = {
-  port: Number(process.env.PORT) || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  appwriteEndpoint: process.env.APPWRITE_ENDPOINT || '',
-  appwriteProjectId: process.env.APPWRITE_PROJECT_ID || '',
+  return {
+    account: new Account(client),
+    teams: new Teams(client),
+  };
 };
-
-export default config;
