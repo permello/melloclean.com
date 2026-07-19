@@ -21,27 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import dotenv from 'dotenv';
+import type { NextFunction, Request, Response } from 'express';
+import { requireAuth } from './requireAuth';
 
-dotenv.config();
-
-interface Config {
-  port: number;
-  nodeEnv: string;
-  corsOrigins: string[];
-  appwriteEndpoint: string;
-  appwriteProjectId: string;
+export function requireTeam(team: string) {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    await requireAuth(req, res, () => {
+      if (!req.user?.teams.includes(team)) {
+        res.sendStatus(403);
+        return;
+      }
+      next();
+    });
+  };
 }
-
-const config: Config = {
-  port: Number(process.env.PORT) || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  appwriteEndpoint: process.env.APPWRITE_ENDPOINT || '',
-  appwriteProjectId: process.env.APPWRITE_PROJECT_ID || '',
-};
-
-export default config;

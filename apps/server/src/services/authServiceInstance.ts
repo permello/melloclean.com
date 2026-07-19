@@ -21,27 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import dotenv from 'dotenv';
+import { buildSessionClients } from '../config/appwrite';
+import { AppwriteAuthService } from './AppwriteAuthService';
+import type { AuthService } from './AuthService';
 
-dotenv.config();
-
-interface Config {
-  port: number;
-  nodeEnv: string;
-  corsOrigins: string[];
-  appwriteEndpoint: string;
-  appwriteProjectId: string;
-}
-
-const config: Config = {
-  port: Number(process.env.PORT) || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  appwriteEndpoint: process.env.APPWRITE_ENDPOINT || '',
-  appwriteProjectId: process.env.APPWRITE_PROJECT_ID || '',
-};
-
-export default config;
+export const authService: AuthService = new AppwriteAuthService(buildSessionClients);

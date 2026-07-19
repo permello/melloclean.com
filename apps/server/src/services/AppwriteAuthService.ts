@@ -21,27 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import dotenv from 'dotenv';
+import type { SessionClientFactory } from '../config/appwrite';
+import type { AuthService, AuthUser } from './AuthService';
 
-dotenv.config();
+export class AppwriteAuthService implements AuthService {
+  constructor(private readonly buildSessionClients: SessionClientFactory) {}
 
-interface Config {
-  port: number;
-  nodeEnv: string;
-  corsOrigins: string[];
-  appwriteEndpoint: string;
-  appwriteProjectId: string;
+  async validateSession(token: string): Promise<AuthUser> {
+    const { account, teams } = this.buildSessionClients(token);
+    const [user, teamList] = await Promise.all([account.get(), teams.list()]);
+
+    return {
+      id: user.$id,
+      email: user.email,
+      emailVerification: user.emailVerification,
+      teams: teamList.teams.map((team) => team.name),
+    };
+  }
+
+  async logout(token: string): Promise<void> {
+    const { account } = this.buildSessionClients(token);
+    await account.deleteSession('current');
+  }
 }
-
-const config: Config = {
-  port: Number(process.env.PORT) || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigins: (process.env.CORS_ORIGINS || '')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean),
-  appwriteEndpoint: process.env.APPWRITE_ENDPOINT || '',
-  appwriteProjectId: process.env.APPWRITE_PROJECT_ID || '',
-};
-
-export default config;
