@@ -6,26 +6,31 @@ TBD - defines the shared Zod schemas and inferred TypeScript types used to valid
 ## Requirements
 
 ### Requirement: Auth schema export location
-All auth-related Zod schemas and their inferred TypeScript types SHALL be exported from `@permello/shared/types/authSchema`. No auth type definitions SHALL exist outside this module.
+All browser-facing authentication request and response schemas and their inferred TypeScript types
+SHALL be exported from `@permello/shared/types/authSchema`. The C# server SHALL expose equivalent JSON
+contracts but SHALL NOT import TypeScript definitions at runtime.
 
 #### Scenario: Importing auth types
-- **WHEN** a consumer imports `userSchema`, `loginSchema`, or `signupSchema` from `@permello/shared/types/authSchema`
-- **THEN** the import resolves to a Zod schema with a corresponding inferred TypeScript type available (`User`, `LoginRequest`, `SignupRequest`)
+- **WHEN** a browser application imports authenticated-user, login, or signup schemas from `@permello/shared/types/authSchema`
+- **THEN** the import resolves to a Zod schema with a corresponding inferred TypeScript type
 
 ### Requirement: User schema shape
-`userSchema` SHALL validate exactly the fields returned by `GET /api/auth/me`: `id` (string), `appwrite_id` (string), `email` (string), `first_name` (string), `last_name` (string), `role` (`'CLIENT' | 'WORKER' | 'ADMIN'`), `email_verified` (boolean), `created_at` (string), `tos_accepted_at` (string, nullable), `tos_first_booking_at` (string, nullable).
+The authenticated-user schema SHALL validate exactly `id` (string), `email` (valid email string),
+`emailVerified` (boolean), and `teams` (array of strings), matching `GET /api/auth/me` and successful
+signup and login responses. It SHALL NOT represent an Appwrite Database profile document or expose a
+singular role as authorization truth.
 
-#### Scenario: Valid user document parses successfully
-- **WHEN** a document containing all required fields with correct types is parsed against `userSchema`
-- **THEN** parsing succeeds and returns a value typed as `User`
+#### Scenario: Valid authenticated identity parses successfully
+- **WHEN** an object containing valid `id`, `email`, `emailVerified`, and `teams` fields is parsed
+- **THEN** parsing succeeds and returns the authenticated-user type
 
-#### Scenario: Missing required field is rejected
-- **WHEN** a document is parsed against `userSchema` without `appwrite_id`
+#### Scenario: Missing teams are rejected
+- **WHEN** an authenticated identity response has no `teams` field
 - **THEN** parsing fails
 
-#### Scenario: Invalid role value is rejected
-- **WHEN** a document is parsed against `userSchema` with `role` set to a value other than `CLIENT`, `WORKER`, or `ADMIN`
-- **THEN** parsing fails
+#### Scenario: Database profile fields are not part of authentication identity
+- **WHEN** a consumer inspects the authenticated-user schema
+- **THEN** it does not require `appwrite_id`, profile names, timestamps, terms fields, or a singular `role`
 
 ### Requirement: Login request schema
 `loginSchema` SHALL require `email` in valid email format and `password` with a minimum length of 8 characters.

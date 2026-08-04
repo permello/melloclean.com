@@ -6,11 +6,12 @@ TBD - defines the security and parsing middleware chain (helmet, cors, JSON body
 ## Requirements
 
 ### Requirement: Security and parsing middleware chain
-The server SHALL apply `helmet`, `cors`, JSON body parsing, and `cookie-parser` middleware to every incoming request, in that order, before any route handler executes.
+The server SHALL apply security headers, CORS evaluation, JSON request parsing, cookie authentication,
+and authorization before protected endpoint handlers execute.
 
-#### Scenario: Middleware applied to all requests
-- **WHEN** any HTTP request reaches the server
-- **THEN** the response carries `helmet`'s default security headers, the request has been evaluated against the CORS policy, its JSON body (if any) has been parsed, and its cookies (if any) have been parsed onto `req.cookies`, all before a route handler runs
+#### Scenario: Processing is applied to requests
+- **WHEN** an HTTP request reaches the server
+- **THEN** security headers and CORS policy are applied and any required JSON, cookie authentication, and authorization processing completes before the endpoint runs
 
 ### Requirement: CORS origin allowlist is environment-driven
 The server SHALL read its permitted CORS origins from the `CORS_ORIGINS` environment variable, a comma-separated list of full origins (including scheme), and configure `cors` to allow only those origins with `credentials: true`.
@@ -31,8 +32,9 @@ When `CORS_ORIGINS` is unset or empty, the server SHALL configure an empty origi
 - **THEN** no cross-origin request is granted CORS access, regardless of its `Origin` header
 
 ### Requirement: Parsed cookies available to route handlers
-The server SHALL parse incoming `Cookie` headers via `cookie-parser` before any route handler executes, making cookie values available on `req.cookies`.
+The server SHALL parse incoming cookies before authentication and endpoint execution so the
+application session cookie is available to authentication processing.
 
 #### Scenario: Request with a cookie header
-- **WHEN** a request includes a `Cookie` header
-- **THEN** `req.cookies` is populated with the parsed cookie key/value pairs before the request reaches a route handler
+- **WHEN** a request includes a `session` cookie
+- **THEN** the cookie value is available to authentication processing before the endpoint executes

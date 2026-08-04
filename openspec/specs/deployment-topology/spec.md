@@ -5,6 +5,19 @@ TBD - defines the Compose-based deployment topology for dev and prod profiles, i
 
 ## Requirements
 
+### Requirement: Server containers use the supported .NET LTS runtime
+The production server container SHALL run the ASP.NET Core service on .NET 10 LTS, and the development
+server container SHALL provide the matching .NET SDK and source-watch workflow. Both SHALL continue to
+listen on port 5000 under their existing Compose service names and networks.
+
+#### Scenario: Production server starts
+- **WHEN** the production Compose profile starts the `server` service
+- **THEN** the ASP.NET Core server runs on port 5000 using the .NET 10 runtime and remains reachable from nginx over `app-net`
+
+#### Scenario: Development server reloads
+- **WHEN** the development profile is running and a C# server source file changes
+- **THEN** the `server-dev` service rebuilds or reloads the ASP.NET Core process without an image rebuild
+
 ### Requirement: Profile-selected Compose topology
 The system SHALL provide a single `docker-compose.yml` defining both a `dev` and a `prod` Compose profile, with the `dev` profile exposed to developers via root `package.json` scripts `dev:start` and `dev:stop`, such that running `npm run dev:start` brings up only the development topology and `npm run dev:stop` tears it down. The `prod` profile SHALL be started via a direct `docker compose --profile prod up` invocation, with no `package.json` script wrapping it.
 
@@ -28,15 +41,17 @@ The dev profile SHALL run three independently-scoped app containers (one per app
 - **THEN** `client-dev` runs only the client app's dev server, `dashboard-dev` runs only the dashboard app's dev server, and `server-dev` runs only the server app's dev server
 
 ### Requirement: External Appwrite backend configuration
-`server`/`server-dev` SHALL be configured with `APPWRITE_ENDPOINT`, `APPWRITE_PROJECT_ID`, and `APPWRITE_API_KEY` env vars to reach Appwrite as an external HTTP dependency, and no Appwrite container SHALL exist in either profile.
+`server` and `server-dev` SHALL receive the Appwrite endpoint and project identifier required to call
+Appwrite as an external HTTP dependency, plus any server credential required by the selected account
+creation flow. No Appwrite container SHALL exist in either profile.
 
 #### Scenario: Dev profile reaches Appwrite Cloud
-- **WHEN** the `dev` profile is started with a `.env` containing Appwrite Cloud values
-- **THEN** `server-dev` is configured to reach Appwrite Cloud via those env vars, and no Appwrite container is started as part of the `dev` profile
+- **WHEN** the dev profile starts with valid Appwrite configuration
+- **THEN** `server-dev` can perform account, session, and team operations against Appwrite Cloud and no Appwrite container starts
 
 #### Scenario: Prod profile reaches the self-hosted Appwrite VPS
-- **WHEN** the `prod` profile is started with a `.env` containing the self-hosted VPS's values
-- **THEN** `server` is configured to reach the self-hosted Appwrite instance via those env vars, and no Appwrite container is started as part of the `prod` profile
+- **WHEN** the prod profile starts with valid Appwrite configuration
+- **THEN** `server` can perform account, session, and team operations against the self-hosted Appwrite instance and no Appwrite container starts
 
 ### Requirement: Dev containers support hot reload
 Dev-profile app containers SHALL reflect source code changes made on the host without requiring an image rebuild.
