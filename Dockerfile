@@ -26,7 +26,6 @@ RUN npm install -g turbo@^2
 COPY . .
 RUN turbo prune @permello/client    --docker --out-dir out/client
 RUN turbo prune @permello/dashboard --docker --out-dir out/dashboard
-RUN turbo prune @permello/server    --docker --out-dir out/server
 
 # client builder
 FROM base AS client-builder
@@ -52,17 +51,24 @@ RUN npm run build --workspace=apps/dashboard
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
 
-# server builder
-FROM base AS server-builder
-COPY --from=pruner /monorepo/out/server/json/ .
-COPY --from=pruner /monorepo/out/server/package-lock.json ./package-lock.json
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
-COPY --from=pruner /monorepo/out/server/full/ .
-COPY --from=pruner /monorepo/tsconfig.base.json ./tsconfig.base.json
-RUN npm run build --workspace=apps/server
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+# .NET server development
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS server-development
+WORKDIR /monorepo/apps/server
+COPY apps/server/MelloClean.Server/MelloClean.Server.csproj MelloClean.Server/
+COPY apps/server/MelloClean.Server.Tests/MelloClean.Server.Tests.csproj MelloClean.Server.Tests/
+COPY apps/server/MelloClean.Server.sln .
+RUN --mount=type=cache,target=/root/.nuget/packages dotnet restore MelloClean.Server.sln
+CMD ["dotnet", "watch", "--project", "MelloClean.Server/MelloClean.Server.csproj", "run"]
+
+# .NET server builder
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS server-builder
+WORKDIR /src
+COPY apps/server/MelloClean.Server/MelloClean.Server.csproj MelloClean.Server/
+COPY apps/server/MelloClean.Server.Tests/MelloClean.Server.Tests.csproj MelloClean.Server.Tests/
+COPY apps/server/MelloClean.Server.sln .
+RUN --mount=type=cache,target=/root/.nuget/packages dotnet restore MelloClean.Server.sln
+COPY apps/server/ .
+RUN --mount=type=cache,target=/root/.nuget/packages dotnet publish MelloClean.Server/MelloClean.Server.csproj --configuration Release --no-restore --output /app/publish
 
 # client production
 FROM node:24-alpine AS client-production
@@ -91,15 +97,9 @@ EXPOSE 3001
 CMD ["node_modules/.bin/react-router-serve", "./build/server/index.js"]
 
 # server production
-FROM node:24-alpine AS server-production
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS server-production
 WORKDIR /app
-RUN addgroup --system --gid 1001 app
-RUN adduser --system --uid 1001 app
-USER app
-
-COPY --from=server-builder --chown=app:app /monorepo/apps/server/build ./build
-COPY --from=server-builder --chown=app:app /monorepo/node_modules ./node_modules
-
-
+USER $APP_UID
+COPY --from=server-builder --chown=$APP_UID:$APP_UID /app/publish .
 EXPOSE 5000
-CMD ["node", "build/src/server.js"]
+ENTRYPOINT ["dotnet", "MelloClean.Server.dll"]

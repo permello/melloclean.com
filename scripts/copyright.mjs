@@ -103,7 +103,7 @@ function walk(dir) {
 }
 
 const allFiles = walk('.')
-  .filter((f) => /\.(js|ts|mjs|tsx)$/.test(f))
+  .filter((f) => /\.(cs|js|ts|mjs|tsx)$/.test(f))
   .filter((f) => !/\.config\.(js|ts|mjs|cjs)$/.test(basename(f)));
 
 let updated = 0;
@@ -118,7 +118,14 @@ function processFiles(files) {
   for (const file of files) {
     const content = readFileSync(file, 'utf-8');
 
-    if (OLD_COPYRIGHT_RE.test(content)) {
+    if (file.endsWith('.cs')) {
+      if (content.includes('Licensed under the MIT License')) {
+        skipped++;
+      } else {
+        writeFileSync(file, `// Copyright (c) 2025-present Eduardo Turcios. Licensed under the MIT License.\n${content}`);
+        added++;
+      }
+    } else if (OLD_COPYRIGHT_RE.test(content)) {
       writeFileSync(file, content.replace(OLD_COPYRIGHT_RE, MIT_HEADER));
       updated++;
       console.log(`Replaced: ${file}`);

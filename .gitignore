@@ -6,6 +6,10 @@ node_modules/
 .react-router/
 build/
 
+# .NET
+bin/
+obj/
+
 #turbo 
 .turbo/
 

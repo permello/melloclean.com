@@ -54,8 +54,9 @@ The gateway will be configured from validated options containing the endpoint an
 will perform account creation and email/password session creation using browser-equivalent Account
 API operations. Session-scoped calls will present the Appwrite session secret only to Account and
 Teams operations. An API key will not participate in ordinary session validation, logout, or team
-resolution; if account creation requires a server credential for the chosen Appwrite deployment, it
-will be an optional secret-backed setting used only by that operation.
+resolution. Server-side email/password session creation requires a secret-backed key with the narrow
+`sessions.write` scope so Appwrite returns the session secret. Public account creation remains an
+unauthenticated Account API operation.
 
 Direct Appwrite calls from endpoint handlers are prohibited. This preserves the existing service
 seam without copying its Node-specific client-factory and singleton mechanics.

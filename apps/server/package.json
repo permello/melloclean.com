@@ -2,28 +2,10 @@
   "name": "@permello/server",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "start": "node build/server.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
-    "lint": "eslint 'src/**/*.ts'",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "helmet": "^8.2.0",
-    "node-appwrite": "^26.2.0"
-  },
-  "devDependencies": {
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.1.0",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
-    "vitest": "^4.1.9"
+    "dev": "dotnet watch --project MelloClean.Server/MelloClean.Server.csproj run",
+    "build": "dotnet build MelloClean.Server.sln --configuration Release --disable-build-servers --maxcpucount:1",
+    "typecheck": "dotnet build MelloClean.Server.sln --configuration Release --disable-build-servers --maxcpucount:1 --no-restore /warnaserror",
+    "lint": "dotnet format MelloClean.Server.sln --verify-no-changes --no-restore",
+    "test": "dotnet test MelloClean.Server.sln --configuration Release --disable-build-servers --maxcpucount:1"
   }
 }

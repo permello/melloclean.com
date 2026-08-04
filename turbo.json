@@ -1,4 +1,5 @@
 {
+  "globalPassThroughEnv": ["DOTNET_CLI_HOME", "NUGET_PACKAGES"],
   "tasks": {
     "dev": {
       "dependsOn": ["^dev"],
@@ -7,7 +8,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**"]
+      "outputs": ["dist/**", "build/**", "**/bin/**", "**/obj/**"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
@@ -16,7 +17,7 @@
       "dependsOn": ["^lint"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build", "^build"]
     },
     "docker:rebuild": {
       "cache": false

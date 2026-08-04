@@ -10,13 +10,17 @@ npm install
 
 ### Development
 
-Start the development server with HMR:
+Start all applications, including the ASP.NET Core server, with hot reload:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The API listens on port 5000. To run only it directly (with .NET 10 installed):
+
+```bash
+dotnet watch --project apps/server/MelloClean.Server/MelloClean.Server.csproj run
+```
 
 ## Building for Production
 
@@ -26,10 +30,10 @@ Create a production build:
 npm run build
 ```
 
-Run the production server:
+Run the server tests directly:
 
 ```bash
-npm run start
+dotnet test apps/server/MelloClean.Server.sln
 ```
 
 ## Deployment
@@ -37,6 +41,11 @@ npm run start
 ### Docker
 
 ```bash
-docker build -t melloclean .
-docker run -p 3000:3000 melloclean
+cp .env.example .env
+npm run dev:start
 ```
+
+The `apps/server/package.json` workspace is an orchestration adapter for Turbo; the server runtime and
+dependencies are managed by .NET. Configure `APPWRITE_ENDPOINT`, `APPWRITE_PROJECT_ID`, optional
+`APPWRITE_SESSION_API_KEY` (with `sessions.write`), and the exact-origin `CORS_ORIGINS` allowlist in
+`.env`. The legacy `APPWRITE_ACCOUNT_CREATION_API_KEY` name remains accepted during migration.

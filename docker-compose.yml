@@ -5,7 +5,7 @@ networks:
 services:
   # --- prod profile ---
   client:
-    profiles: ["prod"]
+    profiles: ['prod']
     build:
       context: .
       target: client-production
@@ -15,7 +15,7 @@ services:
     networks: [public-net]
 
   dashboard:
-    profiles: ["prod"]
+    profiles: ['prod']
     build:
       context: .
       target: dashboard-production
@@ -25,19 +25,22 @@ services:
     networks: [app-net]
 
   server:
-    profiles: ["prod"]
+    profiles: ['prod']
     build:
       context: .
       target: server-production
     environment:
       APPWRITE_ENDPOINT: ${APPWRITE_ENDPOINT}
       APPWRITE_PROJECT_ID: ${APPWRITE_PROJECT_ID}
-      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+      APPWRITE_SESSION_API_KEY: ${APPWRITE_SESSION_API_KEY:-}
+      APPWRITE_ACCOUNT_CREATION_API_KEY: ${APPWRITE_ACCOUNT_CREATION_API_KEY:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      ASPNETCORE_ENVIRONMENT: Production
     restart: unless-stopped
     networks: [app-net]
 
   nginx-prod:
-    profiles: ["prod"]
+    profiles: ['prod']
     image: nginx:alpine
     volumes:
       - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
@@ -46,49 +49,56 @@ services:
       - dashboard
       - server
     ports:
-      - "80:80"
+      - '80:80'
     networks: [public-net, app-net]
 
   # --- dev profile ---
   client-dev:
-    profiles: ["dev"]
+    profiles: ['dev']
     build:
       context: .
       target: development
     command: npx turbo run dev --filter=@permello/client
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - .:/monorepo
       - /monorepo/node_modules
     networks: [public-net]
 
   dashboard-dev:
-    profiles: ["dev"]
+    profiles: ['dev']
     build:
       context: .
       target: development
     command: npx turbo run dev --filter=@permello/dashboard
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - .:/monorepo
       - /monorepo/node_modules
     networks: [app-net]
 
   server-dev:
-    profiles: ["dev"]
+    profiles: ['dev']
     build:
       context: .
-      target: development
-    command: npx turbo run dev --filter=@permello/server
+      target: server-development
+    command: dotnet watch --project MelloClean.Server/MelloClean.Server.csproj run --no-restore
     volumes:
-      - .:/monorepo
-      - /monorepo/node_modules
+      - ./apps/server:/monorepo/apps/server
+      - server-nuget:/root/.nuget/packages
+      - server-bin:/monorepo/apps/server/MelloClean.Server/bin
+      - server-obj:/monorepo/apps/server/MelloClean.Server/obj
     environment:
       APPWRITE_ENDPOINT: ${APPWRITE_ENDPOINT}
       APPWRITE_PROJECT_ID: ${APPWRITE_PROJECT_ID}
-      APPWRITE_API_KEY: ${APPWRITE_API_KEY}
+      APPWRITE_SESSION_API_KEY: ${APPWRITE_SESSION_API_KEY:-}
+      APPWRITE_ACCOUNT_CREATION_API_KEY: ${APPWRITE_ACCOUNT_CREATION_API_KEY:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      ASPNETCORE_ENVIRONMENT: Development
     networks: [app-net]
 
   nginx-dev:
-    profiles: ["dev"]
+    profiles: ['dev']
     image: nginx:alpine
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
@@ -97,5 +107,10 @@ services:
       - dashboard-dev
       - server-dev
     ports:
-      - "80:80"
+      - '80:80'
     networks: [public-net, app-net]
+
+volumes:
+  server-nuget: {}
+  server-bin: {}
+  server-obj: {}
